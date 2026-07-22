@@ -35,7 +35,7 @@ client exercises the shared types import.
 
 Client store state (no new wire types; the store mirrors the contract):
 
-| field | type | source |
+| Field | Type | Source |
 |---|---|---|
 | `assets` | `Map<string, Asset>` | snapshot, then replaced each tick |
 | `drone` | `DroneState` | snapshot, tick |
@@ -45,21 +45,31 @@ Client store state (no new wire types; the store mirrors the contract):
 | `lastTickMs` | `number` | tick |
 | `connection` | `'connecting' \| 'live' \| 'closed'` | socket lifecycle |
 
-### Flowchart - Client Data Path
+### Sequence Diagram - Client Data Path
 
 ```mermaid
-flowchart LR
-    WS["/ws socket"] --> HOOK["useWebSocket<br/>parse WsMessage"]
-    HOOK --> STORE["worldStore<br/>(Zustand)"]
-    STORE -->|"subscribe, imperative diff"| LAYER["assetLayer<br/>canvas circleMarkers"]
-    STORE -->|"React render"| BAR["Top bar<br/>FEED, track count"]
+sequenceDiagram
+    participant WS as /ws socket
+    participant HOOK as useWebSocket
+    participant STORE as worldStore (Zustand)
+    participant LAYER as assetLayer (canvas)
+    participant BAR as Top bar (React)
+    WS->>HOOK: snapshot
+    HOOK->>STORE: applySnapshot
+    STORE->>LAYER: subscribe callback, imperative diff (add all markers)
+    STORE->>BAR: React render (FEED LIVE, count)
+    loop every tick
+        WS->>HOOK: tick
+        HOOK->>STORE: applyTick (assets replaced wholesale)
+        STORE->>LAYER: diff: add new, setLatLng existing, remove departed
+    end
 ```
 
 ### Messages and Endpoints
 
 S2 adds no messages or endpoints; it consumes the S1 contract.
 
-| name | type | action | payload | description |
+| Name | Type | Action | Payload | Description |
 |---|---|---|---|---|
 | `snapshot` | WebSocket | consume | full world | Hydrates the store on connect and reconnect. |
 | `tick` | WebSocket | consume | all asset states + drone | Replaces asset state each second. |
@@ -74,7 +84,11 @@ S2 adds no messages or endpoints; it consumes the S1 contract.
   markers; DOM icons do not. Symbology upgrades (S9) restyle the same markers.
 - Assets replace wholesale each tick (matching D8's full-state wire) rather
   than patching: no diff bookkeeping, and the store can never drift from the
-  server.
+  server. Stated plainly: there is no age-out. An asset present on the client
+  but absent from a subsequent tick is disposed of immediately, store and
+  marker both. Flag for S7: a selected asset can be wiped from client state
+  while its panel is open; the selection path must handle the missing record
+  (the TRACK LOST behavior in FR-4) rather than assume its data source exists.
 
 ## Acceptance
 
@@ -88,4 +102,18 @@ S2 adds no messages or endpoints; it consumes the S1 contract.
 
 ## Review
 
-Pending design gate.
+### Round 1 - Design Gate, Operator Comments (Verbatim)
+
+> - Flowchart I think would be more clear with a sequence diagram or at least borders to delineate the separation between
+> - Titleize table headers for the endpoint tables
+> - Infer plainly in decision 3 that there is no age-out and assets that are existing at the client and arent in a subsequent tick are disposed of. We will need to flag what to do about data being display for selected assets when they are wiped from the client state record.
+
+### Disposition
+
+Flowchart replaced with a sequence diagram (participants delineate the layers;
+the tick loop and the diff behavior are now explicit in time). Table headers
+titleized here and as standing convention. Decision 3 states the no-age-out
+disposal semantics plainly and flags the selected-asset wipe for S7's TRACK
+LOST path.
+
+Gate stamp: pending round 2.
