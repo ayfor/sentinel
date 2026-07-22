@@ -14,6 +14,12 @@ ruling) and survives despawn honestly (TRACK LOST).
 - Selection: circleMarker click sets `selectedAssetId` in local React state
   (not the world store, not synced). Clicking empty map or the panel close
   clears it.
+- Hover affordance (operator addition, batch gate): each asset carries an
+  invisible hit-target circle (radius 8) widening the effective click area; on
+  hover an ink ring appears around the marker (marker radius +4, ink at 40
+  percent) with a pointer cursor. On selection the ring persists solid until
+  deselect. Ink, not cyan or red: hover is affordance, not state, and the
+  color budget stays intact.
 - History: on select the client GETs the asset's track and renders it as a
   polyline in about 10 opacity-bucketed segments, oldest faintest. History is
   fetched over REST, not the wire: tick payloads stay slim and history is only
@@ -77,4 +83,12 @@ sequenceDiagram
 
 ## Review
 
-Pending design gate.
+### Batch Gate - Operator Comments (Verbatim)
+
+> Lets add a ring that appears around an asset when it hovered to make it easier to select as well.
+
+Disposition: hover ring plus widened invisible hit target added to Design;
+selected state persists the ring solid; ink at 40 percent per the color
+budget.
+
+Pending batch design gate.
