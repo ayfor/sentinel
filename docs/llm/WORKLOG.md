@@ -56,3 +56,19 @@ typechecked but first exercised in S2.
 HUMAN REVIEW — (stamp pending in story doc)
 EXTERNAL REVIEW — Codex (automated PR reviewer) flagged P2: test scripts advertised
 vitest before S5 declares it; fixed at gate by dropping the scripts until S5.
+
+## S1 · Jul 21 ~22:45-23:55 — World tick
+SPEC — docs/stories/S1-world-tick.md, two-round design gate before code
+GENERATED — wire contract (WsMessage union), shared/geo.ts pure geometry,
+world/generator/tick/broadcast modules, README component-diagram delta.
+GATE — verification: strict typechecks, live WS probe (snapshot 120 assets,
+three consecutive ticks, one aircraft tracked moving consistently with its
+vector). Diff hygiene correction at gate: Vite dep cache stripped and ignored.
+HUMAN REVIEW — four rounds, all verbatim in the story doc: design-gate revisions
+(TRACK_HISTORY clarity, header conventions, ThreatLevel enum now, verbose prop
+names, interface-table schema); gate stamp "Approved, proceed with S1"; PR-window
+questions that exposed a magic number (HISTORY_CAPACITY now derived from
+TICK_MS), an understated memory estimate (corrected to ~0.9 MB), and two
+fabricated ERD pseudo-columns (removed); PR inline comments (FULL_CIRCLE_DEG
+const, timestampMs renames, EventKind extraction, verbose tick locals,
+step-by-step destinationPoint docs). Merged as PR #15; issue #4 closed.
