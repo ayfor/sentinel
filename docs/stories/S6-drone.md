@@ -54,11 +54,12 @@ flowchart LR
 
 ## Decisions
 
-- Pursuit steers at the target's current position (no lead-angle intercept):
+Story-local decisions are numbered for citation from code (S6#dN).
+- d1: Pursuit steers at the target's current position (no lead-angle intercept):
   FR-3 says shadow, not intercept; the simpler control is also the honest one.
-- Speed caps (90 patrol, 140 shadow) keep the drone slower than most traffic:
+- d2: Speed caps (90 patrol, 140 shadow) keep the drone slower than most traffic:
   shadowing reads as following, and pursuit geometry stays visible on screen.
-- The FSM is a pure function of (drone, patrol, assets, dt) returning the next
+- d3: The FSM is a pure function of (drone, patrol, assets, dt) returning the next
   drone state plus events: unit-testable beside S5's functions.
 
 ## Acceptance
