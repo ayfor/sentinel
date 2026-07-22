@@ -49,14 +49,15 @@ erDiagram
         number nearestZoneMeters "null until S5"
     }
     TRACK_HISTORY {
-        Fix[] fixes "capacity 300"
-        string policy "ring buffer, oldest fix overwritten"
-        string span "5 min at 1 Hz"
+        Fix[] fixes "ring buffer, capacity = window x tick rate (300), oldest overwritten"
     }
 ```
 
 A track history is the asset's recorded flight track: a fixed-capacity ring
-buffer of position fixes, one appended per tick. At capacity the oldest fix is
+buffer of position fixes, one appended per tick. The vocabulary is deliberate
+domain idiom: a fix is a determination of position at a moment (i.e., a position
+fix, as in navigation and GPS), and a track is a time-ordered sequence of fixes,
+which is how radar and surveillance systems describe exactly this structure. At capacity the oldest fix is
 overwritten, so the buffer always holds the most recent 5 minutes. S7 reads it
 for the faded trail; S5 reads it for the 5-minute average behind the predicted
 path.
