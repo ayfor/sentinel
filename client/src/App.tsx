@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLeafletMap } from './map/useLeafletMap';
 import { attachAssetLayer } from './map/assetLayer';
+import { attachMotion } from './map/motion';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
 
@@ -55,7 +56,18 @@ export default function App() {
 
   useEffect(() => {
     if (!mapRef.current) return;
-    return attachAssetLayer(mapRef.current);
+    const layer = attachAssetLayer(mapRef.current);
+    layer.setTickPositioning(false); // motion owns movement (S3)
+    const disposeMotion = attachMotion(layer.markers);
+    if (import.meta.env.DEV) {
+      // Dev-only introspection hook for functional verification (not shipped
+      // in production builds; import.meta.env.DEV is compile-time false there).
+      (window as unknown as Record<string, unknown>).__sentinelMarkers = layer.markers;
+    }
+    return () => {
+      disposeMotion();
+      layer.dispose();
+    };
   }, [mapRef]);
 
   return (

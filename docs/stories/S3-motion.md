@@ -94,4 +94,8 @@ described as the per-display-frame callback API, and linear interpolation
 given its formula plus a plain-terms reading. Diagram labels updated to the
 full terms.
 
-Pending design gate, round 2.
+### Round 2 - Design Gate Stamp (Verbatim)
+
+> Approved, proceed with S3
+
+Gate stamp: pending PR review and merge.

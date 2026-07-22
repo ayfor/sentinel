@@ -10,22 +10,31 @@ const MARKER_STYLE: L.CircleMarkerOptions = {
   stroke: false,
 };
 
+export interface AssetLayerHandle {
+  /** Live marker registry, keyed by asset id. Motion (S3) drives positions. */
+  markers: Map<string, L.CircleMarker>;
+  /** When false, the layer stops positioning on tick (motion owns movement). */
+  setTickPositioning: (enabled: boolean) => void;
+  dispose: () => void;
+}
+
 /**
  * Imperative asset rendering (D6), subscribed to the store outside the React
  * tree: per-tick updates touch Leaflet directly and never trigger React
- * reconciliation. S3's interpolation loop slots into this module.
- *
- * Returns a dispose function.
+ * reconciliation. The layer owns marker add and remove; S3's motion module
+ * takes over positioning while attached, and tick positioning is the fallback
+ * when motion is disposed (S3 design).
  */
-export function attachAssetLayer(map: L.Map): () => void {
+export function attachAssetLayer(map: L.Map): AssetLayerHandle {
   const markers = new Map<string, L.CircleMarker>();
   const layer = L.layerGroup().addTo(map);
+  let tickPositioning = true;
 
   const sync = (assets: Map<string, Asset>) => {
     for (const [id, asset] of assets) {
       const existing = markers.get(id);
       if (existing) {
-        existing.setLatLng([asset.pos.lat, asset.pos.lng]);
+        if (tickPositioning) existing.setLatLng([asset.pos.lat, asset.pos.lng]);
       } else {
         const marker = L.circleMarker([asset.pos.lat, asset.pos.lng], MARKER_STYLE);
         marker.addTo(layer);
@@ -46,9 +55,15 @@ export function attachAssetLayer(map: L.Map): () => void {
     if (state.assets !== prev.assets) sync(state.assets);
   });
 
-  return () => {
-    unsubscribe();
-    layer.remove();
-    markers.clear();
+  return {
+    markers,
+    setTickPositioning: (enabled) => {
+      tickPositioning = enabled;
+    },
+    dispose: () => {
+      unsubscribe();
+      layer.remove();
+      markers.clear();
+    },
   };
 }
