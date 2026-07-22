@@ -14,12 +14,16 @@ ruling) and survives despawn honestly (TRACK LOST).
 - Selection: circleMarker click sets `selectedAssetId` in local React state
   (not the world store, not synced). Clicking empty map or the panel close
   clears it.
-- Hover affordance (operator addition, batch gate): each asset carries an
-  invisible hit-target circle (radius 8) widening the effective click area; on
-  hover an ink ring appears around the marker (marker radius +4, ink at 40
-  percent) with a pointer cursor. On selection the ring persists solid until
-  deselect. Ink, not cyan or red: hover is affordance, not state, and the
-  color budget stays intact.
+- Hover affordance (operator addition, batch gate; mechanism revised after
+  operator functional testing on S2): the canvas renderer's built-in
+  `tolerance` option (8 px) adds click-slop to every interactive layer — one
+  option instead of invisible hit geometry, and it directly addresses the
+  observed pan-vs-click conflict (micro-drags on tiny targets read as pans;
+  a larger effective target absorbs them). On hover an ink ring appears
+  around the marker (marker radius +4, ink at 40 percent) with a pointer
+  cursor; on selection the ring persists solid until deselect. Ink, not cyan
+  or red: hover is affordance, not state, and the color budget stays
+  intact.
 - History: on select the client GETs the asset's track and renders it as a
   polyline in about 10 opacity-bucketed segments, oldest faintest. History is
   fetched over REST, not the wire: tick payloads stay slim and history is only
@@ -88,8 +92,15 @@ Story-local decisions are numbered for citation from code (S7#dN).
 
 > Lets add a ring that appears around an asset when it hovered to make it easier to select as well.
 
-Disposition: hover ring plus widened invisible hit target added to Design;
-selected state persists the ring solid; ink at 40 percent per the color
-budget.
+> Noticed during functional testing that the pan controls for the map are always available, making it even harder to select (or click on) assets. Also, I am not seeing any hover effects to increase the selectable area for these assets.
+
+(Second comment arrived on the S2 PR during functional testing; interaction is
+S7 scope, so it lands here.)
+
+Disposition: hover ring in Design; selected state persists the ring solid;
+ink at 40 percent per the color budget. Hit-slop mechanism revised per the
+functional-testing comment: canvas renderer `tolerance` (8 px) replaces
+invisible hit circles — less geometry, and it absorbs the micro-drag pans
+observed on tiny targets. S2 itself ships no interaction by design.
 
 Pending batch design gate.
