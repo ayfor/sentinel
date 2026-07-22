@@ -159,10 +159,13 @@ description (standing convention).
 
 > variable clarity. Use more verbose naming here
 
+> Can we add some inline docs (brief but step by step to) destinationPoint
+
 Disposition: FULL_CIRCLE_DEG exported from shared/geo.ts, used in
 normalizeBearing and the generator's heading spawn. Fix.t renamed timestampMs
 and applied consistently (EventEntry, the tick message). EventKind extracted as
 a named union beside ThreatLevel and DroneMode. Tick-loop locals renamed
-lastTickMs, nowMs, deltaSeconds.
+lastTickMs, nowMs, deltaSeconds. destinationPoint documented step by step
+(numbered derivation in the docstring, step markers inline).
 
 PR gate: pending operator merge of PR #15.
