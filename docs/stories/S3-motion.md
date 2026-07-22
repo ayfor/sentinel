@@ -58,11 +58,12 @@ store already holds. That absence is the design.
 
 ## Decisions
 
-- Render one tick behind so interpolation always runs between two known fixes;
+Story-local decisions are numbered for citation from code (S3#dN).
+- d1: Render one tick behind so interpolation always runs between two known fixes;
   extrapolation is banned because corrected predictions read as backward jumps.
-- Linear interpolation only: at 1 s ticks and aircraft speeds, great-circle
+- d2: Linear interpolation only: at 1 s ticks and aircraft speeds, great-circle
   curvature between fixes is sub-pixel at every zoom this console uses.
-- Position lerp happens in latitude and longitude directly (not projected
+- d3: Position lerp happens in latitude and longitude directly (not projected
   space): error at this scale is negligible and the code stays obvious.
 
 ## Acceptance
