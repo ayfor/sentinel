@@ -35,6 +35,13 @@ placeholders until S5 computes them.
      ambiguous, so TTE and breach semantics would depend on fill rule; the
      O(n squared) segment-intersection check is trivial at zone scale).
   6. At most 100 vertices (payload sanity).
+- Rejection feedback is client-local and transient: a red-glass notice chip
+  (threat-chip tokens) below the status bar shows the reason from the 400
+  body and auto-dismisses after about 5 seconds. Rejections are private to
+  the submitting tab: they never enter the event stream, which broadcasts to
+  every operator. Primary UX is prevention (geoman blocks self-intersection
+  and short rings at draw time); the notice is the safety net for the
+  server-authoritative path.
 
 ## Interfaces
 
@@ -89,6 +96,7 @@ sequenceDiagram
         CAST->>STOREB: zones message
     else invalid ring
         REST->>GEO: 400 with reason, no broadcast, local layer discarded
+        GEO->>GEO: red-glass notice chip with reason, auto-dismiss ~5 s (client-local)
     end
 ```
 
@@ -102,6 +110,10 @@ Story-local decisions are numbered for citation from code (S4#dN).
   philosophy at zone scale (a handful of polygons).
 - d3: Designators are server-assigned so two tabs drawing concurrently cannot
   mint RZ-01 twice.
+- d4: Rejection feedback is client-local, never an event: the event stream is
+  shared operational context for all operators, and a single tab's invalid
+  submission is not. The 400 response body is already private to the
+  submitter; the notice chip surfaces it.
 
 ## Acceptance
 
@@ -136,4 +148,17 @@ non-degenerate area, simplicity (no self-intersection, with the fill-rule
 ambiguity rationale), and a vertex cap. Client-side geoman prevents
 self-intersection at draw time; the server verifies regardless.
 
-Pending design gate, round 3.
+### Round 3 - Design Gate, Operator Comments (Verbatim)
+
+> How do we inform the user that they submitted an invalid polygon?
+
+### Disposition (Round 3)
+
+The doc had silent discard. Added: client-local transient rejection notice
+(red-glass chip below the status bar, reason from the 400 body, auto-dismiss
+about 5 s), recorded as S4#d4 with the privacy rationale (rejections never
+enter the shared event stream). Sequence diagram carries the notice in the
+invalid branch. Prevention remains the primary UX; the notice is the
+server-authoritative safety net.
+
+Pending design gate, round 4.
