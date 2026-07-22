@@ -6,8 +6,7 @@
   "workspaces": ["shared", "server", "client"],
   "scripts": {
     "dev": "concurrently -n server,client -c cyan,white \"npm:dev -w server\" \"npm:dev -w client\"",
-    "build": "npm run build -w client",
-    "test": "npm run test -w server"
+    "build": "npm run build -w client"
   },
   "devDependencies": {
     "concurrently": "^9.1.0",

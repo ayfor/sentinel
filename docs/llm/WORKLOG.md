@@ -51,3 +51,5 @@ through proxy. One correction at gate: proxy 404 → server routes given explici
 /api prefix (D7). Honest AC note: client-side @shared import is wired and
 typechecked but first exercised in S2.
 HUMAN REVIEW — (stamp pending in story doc)
+EXTERNAL REVIEW — Codex (automated PR reviewer) flagged P2: test scripts advertised
+vitest before S5 declares it; fixed at gate by dropping the scripts until S5.
