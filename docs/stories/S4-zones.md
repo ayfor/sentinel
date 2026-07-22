@@ -70,6 +70,17 @@ simplification, no vertex editing per the FR-2 ruling), and the dotted
 relationship is computed by S5, not stored: zones hold no references to
 assets.
 
+Terminology (GIS-standard nesting, GeoJSON RFC 7946): the polygon is the areal
+feature — the zone, the thing with an inside — and the ring is the closed
+vertex loop bounding it. A polygon is defined by rings: one exterior ring plus
+optional interior rings for holes. ZonePolygon is the restricted case: exactly
+one exterior ring, no holes (a donut zone is out of scope; nothing in FR-2
+wants one). Deviation from GeoJSON, by design: a true linear ring closes
+explicitly (first point repeated as last); ours closes implicitly — 3+
+distinct vertices, edges being consecutive pairs plus last-to-first.
+Validation clause 1 bridges the conventions: explicit closure from a client is
+tolerated and stripped, implicit closure is stored.
+
 ### Messages and Endpoints
 
 | Name | Type | Action | Payload | Description |
@@ -177,4 +188,17 @@ Clause 2 clarified: bounds are the WGS84 coordinate domain, deliberately not
 the sector box (invisible boundary, harmless violation, confusing rejection);
 antimeridian-crossing rings recorded as out of scope with the reason.
 
-Pending design gate, round 5.
+### Round 5 - Design Gate, Operator Comments (Verbatim)
+
+> Is it a true ring or a polygon as the name suggests? The naming implies both. If it missed the description please specify where this is detailed
+
+### Disposition (Round 5)
+
+Both, in the standard GIS nesting, and the doc had not explained it: a
+terminology paragraph now defines polygon (the areal feature) vs ring (its
+bounding vertex loop), states the one-exterior-ring-no-holes restriction, and
+records the deliberate deviation from GeoJSON explicit closure with the
+clause-1 bridge. Previously detailed only as a types.ts comment and the ERD
+field annotation.
+
+Pending design gate, round 6.
