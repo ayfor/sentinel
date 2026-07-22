@@ -88,7 +88,10 @@ action column (e.g., POST, DELETE).
 ## Decisions
 
 - Track histories record from boot, not from first selection: history must
-  already exist when S7 asks for it; cost is ~144 KB at 120 assets.
+  already exist when S7 asks for it. Capacity is derived, not chosen: the FR-4
+  window (5 min) times the tick rate (1 Hz) gives 300 fixes; the code computes
+  it from TICK_MS so a rate change cannot desync the window. Cost at 120 assets
+  is roughly 0.9 MB of raw fixes (a few MB in heap terms), trivial server-side.
 - Generator wander is bounded heading drift only (no altitude or speed drama);
   believable motion beats theatrical motion on a monitoring console.
 - setInterval with dt measured per tick (not assumed 1000 ms) so drift under

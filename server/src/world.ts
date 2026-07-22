@@ -8,8 +8,14 @@ import type {
   ZonePolygon,
 } from '../../shared/types.js';
 
-/** Track history capacity: 300 fixes at 1 Hz = 5 minutes (FR-4). */
-export const HISTORY_CAPACITY = 300;
+/** Simulation tick interval. The tick loop and history capacity both derive from it. */
+export const TICK_MS = 1000;
+
+/** FR-4 history window: the trail and the prediction average both read 5 minutes. */
+export const HISTORY_WINDOW_S = 300;
+
+/** Fixes retained per asset, derived so a tick-rate change cannot desync the window. */
+export const HISTORY_CAPACITY = HISTORY_WINDOW_S * (1000 / TICK_MS);
 
 /** Recent events kept for snapshots. */
 const EVENT_CAPACITY = 50;

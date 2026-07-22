@@ -1,9 +1,7 @@
 import type { WsMessage } from '../../shared/types.js';
 import { destinationPoint } from '../../shared/geo.js';
 import { wander } from './generator.js';
-import { recordFix, type World } from './world.js';
-
-export const TICK_MS = 1000;
+import { recordFix, TICK_MS, type World } from './world.js';
 
 /**
  * The 1 Hz simulation loop. dt is measured, not assumed (design ruling), so
