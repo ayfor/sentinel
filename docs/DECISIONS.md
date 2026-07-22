@@ -16,6 +16,8 @@ live in `docs/stories/`; these are the ones that shape the system.
 | D9 | Generator is the demo-default data source; live public feed is a toggle | The demo can never be taken down by a third-party API; shipping both is more robust for demo purposes | Live-API-only (external dependency at evaluation time) |
 | D10 | No CSS framework; token sheet plus component classes | A lot of overhead for relatively few components; the design language is bespoke recipes (glass, corner ticks, grain) that want named classes. Reconsider if scope grows to more unique pages and workflows beyond map and asset control | Tailwind (the studio default elsewhere) |
 
+| D12 | Motion smoothing (S3) deferred until after S12; 1 Hz stepping stands | Functional testing showed freeze-and-snap under occlusion; prime suspect is Leaflet canvas repaints riding the renderer's own requestAnimationFrame, and chasing render-pipeline polish was the wrong spend against the deadline. Stepping is honest operator-console behavior | Continuing to debug interpolation ahead of functional scope |
+
 Design-system rulings (palette, layout OPT-B + slide-out panels, glass grammar for
 interactables, six taste tensions T1–T6) are summarized in `docs/DESIGN.md` at ship;
 tokens are law in `client/src/styles/tokens.css`.

@@ -88,3 +88,17 @@ S#dN decision-point nomenclature, operator; wss scheme under HTTPS, Codex P1);
 functional-testing comment (pan-vs-click, no hover) scoped to S7 and recorded
 there, improving its hit-slop design to renderer tolerance. Merged as PR #16;
 issue #5 closed.
+
+## S3 · Jul 22 ~02:15-03:10 — Motion (attempted, deferred)
+SPEC — docs/stories/S3-motion.md (terminology round, stamp, both verbatim)
+GENERATED — motion module (arrival-timed fix pairs, clamped alpha, teleport
+snap), asset-layer positioning handoff, dev introspection hook.
+GATE — fronted-tab measurement flawless (45 samples / 33 ms / zero spikes);
+operator functional testing still showed freeze-and-snap. Two hardening
+rounds (interval fallback, visibility rebase, continuity anchor) did not
+resolve the felt behavior. Root-cause candidate isolated: Leaflet canvas
+repaints ride the renderer's own requestAnimationFrame, so model updates do
+not paint under occlusion.
+HUMAN REVIEW — operator ruled deferral (verbatim in doc round 4): smoothing
+stripped, story rescheduled after S12; S2 stepping stands. PR #19 closed
+unmerged as the resumption point; D12 records the tradeoff.
