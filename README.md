@@ -124,7 +124,7 @@ flowchart LR
         WORLD --> CAST
     end
 
-    TYPES["shared/types.ts<br/>wire contract"]
+    TYPES["shared/<br/>types.ts wire contract<br/>geo.ts geometry"]
 
     GEO -->|"commands (REST)"| REST
     CAST -->|"state (WS, one way)"| WS_HOOK
