@@ -98,4 +98,20 @@ full terms.
 
 > Approved, proceed with S3
 
+### Round 3 - Functional Feedback (Verbatim)
+
+> Still appears quite jumpy in the current preview
+
+### Disposition (Round 3)
+
+Diagnosis: interpolation measured flawless when the tab is fronted (45 samples
+at 33 ms, zero spikes, velocity matching the asset envelope); the jumpiness is
+browser suspension of requestAnimationFrame for occluded and backgrounded tabs
+(side-pane viewing, and the second tab of the sync demo). Hardening applied:
+a coarse 250 ms interval fallback keeps positions advancing under occlusion
+(deep background throttles it to ~1 Hz, gracefully matching the tick rate);
+a visibilitychange handler holds at the latest fix on return instead of
+rubber-banding; and pair rotation now anchors at the marker's actual rendered
+position, making arrival jitter mathematically unable to cause snaps.
+
 Gate stamp: pending PR review and merge.

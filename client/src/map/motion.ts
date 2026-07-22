@@ -38,6 +38,7 @@ export function attachMotion(markers: Map<string, L.CircleMarker>): () => void {
     const arrivalMs = Date.now();
     for (const [id, asset] of assets) {
       const pair = pairs.get(id);
+      const rendered = markers.get(id)?.getLatLng();
       if (!pair || tooFar(pair.nextPos, asset.pos)) {
         // New asset or teleport: snap, no glide.
         pairs.set(id, {
@@ -48,7 +49,9 @@ export function attachMotion(markers: Map<string, L.CircleMarker>): () => void {
         });
       } else {
         pairs.set(id, {
-          prevPos: pair.nextPos,
+          // Continuity anchor: glide from wherever the marker actually is,
+          // not from the old target — arrival jitter can never cause a snap.
+          prevPos: rendered ? { lat: rendered.lat, lng: rendered.lng } : pair.nextPos,
           prevArrivalMs: pair.nextArrivalMs,
           nextPos: asset.pos,
           nextArrivalMs: arrivalMs,
@@ -65,8 +68,7 @@ export function attachMotion(markers: Map<string, L.CircleMarker>): () => void {
     if (state.assets !== prev.assets) ingest(state.assets);
   });
 
-  let frameId = 0;
-  const frame = () => {
+  const step = () => {
     const renderTimeMs = Date.now() - RENDER_DELAY_MS;
     for (const [id, pair] of pairs) {
       const marker = markers.get(id);
@@ -79,12 +81,37 @@ export function attachMotion(markers: Map<string, L.CircleMarker>): () => void {
         lerp(pair.prevPos.lng, pair.nextPos.lng, alpha),
       ]);
     }
+  };
+
+  let frameId = 0;
+  const frame = () => {
+    step();
     frameId = requestAnimationFrame(frame);
   };
   frameId = requestAnimationFrame(frame);
 
+  // Occlusion fallback: browsers suspend requestAnimationFrame for occluded
+  // or backgrounded tabs (observed as freeze-then-snap in a side-pane view,
+  // and it would degrade the two-tab sync demo). A coarse interval keeps
+  // positions advancing; deep background throttles it to ~1 Hz, which
+  // gracefully matches the tick rate.
+  const fallbackId = window.setInterval(step, 250);
+
+  // Returning to visibility after suspension: hold at the latest fix instead
+  // of rubber-banding through the missed span.
+  const onVisible = () => {
+    if (document.visibilityState !== 'visible') return;
+    for (const pair of pairs.values()) {
+      pair.prevPos = pair.nextPos;
+      pair.prevArrivalMs = pair.nextArrivalMs;
+    }
+  };
+  document.addEventListener('visibilitychange', onVisible);
+
   return () => {
     cancelAnimationFrame(frameId);
+    window.clearInterval(fallbackId);
+    document.removeEventListener('visibilitychange', onVisible);
     unsubscribe();
     pairs.clear();
   };
