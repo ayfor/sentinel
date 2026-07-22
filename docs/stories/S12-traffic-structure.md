@@ -31,10 +31,11 @@ No wire, REST, or client changes: the world simply moves differently.
 
 ## Decisions
 
-- Corridors over scripted scenarios: organic, repeatable demo pressure without
+Story-local decisions are numbered for citation from code (S12#dN).
+- d1: Corridors over scripted scenarios: organic, repeatable demo pressure without
   a canned intruder. The breach-shadow sequence becomes reproducible by
   drawing a zone across a stream.
-- Asset count unchanged (120): structure, not density, is what was missing.
+- d2: Asset count unchanged (120): structure, not density, is what was missing.
 
 ## Acceptance
 
