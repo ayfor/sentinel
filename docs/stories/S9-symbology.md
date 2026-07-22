@@ -27,9 +27,10 @@ No wire, REST, or store changes: S9 renders existing state.
 
 ## Decisions
 
-- The pulse animates in the existing rAF loop rather than CSS: canvas markers
+Story-local decisions are numbered for citation from code (S9#dN).
+- d1: The pulse animates in the existing rAF loop rather than CSS: canvas markers
   have no DOM to animate, and one loop owning all motion is the S3 contract.
-- Symbology lives entirely in the layer's style function: S5 owns what threat
+- d2: Symbology lives entirely in the layer's style function: S5 owns what threat
   is, S9 owns only what it looks like.
 
 ## Acceptance
