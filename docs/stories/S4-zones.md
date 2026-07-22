@@ -20,8 +20,21 @@ placeholders until S5 computes them.
 - `client/src/map/zoneLayer.ts`: imperative like the asset layer; renders each
   zone as a red dashed polygon (token: --red at 12 percent fill) with a
   designator label at the centroid.
-- Validation server-side: ring is 3 or more points, all finite lat and lng
-  within world bounds; invalid input is a 400 with a reason.
+- Validation, server-authoritative (client-side geoman also prevents
+  self-intersection at draw time via allowSelfIntersection false). A ring is
+  valid iff all of the following hold; anything else is a 400 with a reason
+  and no broadcast:
+  1. 3+ vertices after normalizing away a duplicated closing point (first ==
+     last is tolerated and stripped).
+  2. Every coordinate finite: lat in [-90, 90], lng in [-180, 180], no NaN or
+     Infinity.
+  3. No zero-length edges (consecutive duplicate vertices).
+  4. Non-degenerate: nonzero area (an all-collinear ring has no interior, so
+     breach against it is meaningless).
+  5. Simple: no self-intersecting edges (a figure-eight makes "inside"
+     ambiguous, so TTE and breach semantics would depend on fill rule; the
+     O(n squared) segment-intersection check is trivial at zone scale).
+  6. At most 100 vertices (payload sanity).
 
 ## Interfaces
 
@@ -110,4 +123,17 @@ annotations (server-assigned id and designator, ring storage rule), its
 containment in WORLD, and the dotted computed-not-stored relationship to
 assets via S5. Noted as the S1 contract type populated here, no wire change.
 
-Pending design gate, round 2.
+### Round 2 - Design Gate, Operator Comments (Verbatim)
+
+> What defines an invalid ring?
+
+### Disposition (Round 2)
+
+The doc under-specified it (arity, finiteness, bounds only). Validation
+expanded to the full six-clause definition: arity after closing-point
+normalization, finite coordinates in range, no zero-length edges,
+non-degenerate area, simplicity (no self-intersection, with the fill-rule
+ambiguity rationale), and a vertex cap. Client-side geoman prevents
+self-intersection at draw time; the server verifies regardless.
+
+Pending design gate, round 3.
