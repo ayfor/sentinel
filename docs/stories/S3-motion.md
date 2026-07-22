@@ -11,10 +11,16 @@ stepping (i.e., D5 made real).
 ## Design
 
 - `client/src/map/motion.ts`: subscribes to the store; per asset keeps the two
-  most recent fixes (previous, latest). A requestAnimationFrame loop computes
-  render time as now minus one tick interval, derives alpha between the fix
-  timestamps, linearly interpolates the position, and calls `setLatLng`
-  directly on the marker (React untouched).
+  most recent fixes (previous, latest). A requestAnimationFrame loop (the
+  browser API that invokes a callback once per display frame, about 60 times
+  per second) computes render time as now minus one tick interval, derives
+  alpha between the fix timestamps, linearly interpolates the position, and
+  calls `setLatLng` directly on the marker (React untouched).
+- Linear interpolation (lerp): given two known positions P1 at time t1 and P2
+  at t2, the rendered position at time t between them is
+  P1 + (P2 - P1) x alpha, where alpha = (t - t1) / (t2 - t1) runs 0 to 1. In
+  plain terms: slide in a straight line from the previous fix to the latest
+  fix, arriving exactly when the next fix is due.
 - The asset layer keeps ownership of marker add and remove; motion takes over
   position updates when active. Layer position-setting on tick becomes the
   fallback path when motion is disposed (the module is removable without
@@ -37,13 +43,13 @@ mutates Leaflet markers.
 sequenceDiagram
     box Client (browser)
         participant STORE as worldStore
-        participant MOTION as motion (rAF loop)
+        participant MOTION as motion (requestAnimationFrame loop)
         participant LAYER as assetLayer markers
     end
     STORE->>MOTION: tick applied (fix pair updated per asset)
     loop every animation frame (~60 fps)
         MOTION->>MOTION: alpha = (renderTime - t1) / (t2 - t1), clamped
-        MOTION->>LAYER: setLatLng(lerp(prev, latest, alpha))
+        MOTION->>LAYER: setLatLng(linear interpolation of prev to latest at alpha)
     end
     alt latest fix older than 2 tick intervals
         MOTION->>LAYER: hold at latest fix (never extrapolate)
@@ -76,4 +82,16 @@ Story-local decisions are numbered for citation from code (S3#dN).
 
 ## Review
 
-Pending design gate.
+### Round 1 - Design Gate, Operator Comments (Verbatim)
+
+> - Elaborate on "lerp" terminology
+> - Same as above with "rAF"
+
+### Disposition
+
+Both terms spelled out and defined at first use: requestAnimationFrame
+described as the per-display-frame callback API, and linear interpolation
+given its formula plus a plain-terms reading. Diagram labels updated to the
+full terms.
+
+Pending design gate, round 2.
