@@ -1,44 +1,44 @@
 # SENTINEL ⬡
 
-Map-based real-time data visualization — Dominion Dynamics technical assessment, Problem 1.
+Map-based real-time data visualization. Dominion Dynamics technical assessment, Problem 1.
 
 A live airspace console over the Ottawa sector: 100+ simulated assets, user-drawn
-restricted zones with per-asset time-to-entry, an autonomous patrol drone that shadows
-zone breachers, and multi-client sync over a server-authoritative WebSocket.
+restricted zones with per-asset time-to-entry, an autonomous patrol drone that
+shadows zone breachers, and multi-client sync over a server-authoritative WebSocket.
 
-**Status: build in progress** — story tracker at [#1](https://github.com/ayfor/sentinel/issues/1).
+Status: build in progress. Story tracker: [#1](https://github.com/ayfor/sentinel/issues/1).
 
 ## Quickstart
 
 ```bash
 npm install
-npm run dev        # server :3001 + client :5173
+npm run dev        # server :3001, client :5173
 ```
 
-Open http://localhost:5173. Two tabs to see sync.
+Open http://localhost:5173. Open a second tab to see sync.
 
-## The process — from requirements to PRs
+## Process: from requirements to PRs
 
-This repo is built with a documented human-directed AI workflow. Every artifact
-below exists in-tree; nothing is reconstructed after the fact.
+This project was built with a human-directed AI workflow. The process artifacts
+are part of the repository and were written as the work happened.
 
 ```mermaid
 flowchart TB
-    subgraph SPEC["SPECIFICATION — every box human-ruled at a gate"]
+    subgraph SPEC["SPECIFICATION (human-ruled at each gate)"]
         direction LR
         A["Assessment brief"] --> B["REQUIREMENTS.md<br/>FR-1..7 + edge rulings"]
-        B --> C["Architecture<br/>DECISIONS.md · D1–D9"]
-        C --> D["Stories S0–S11<br/>tracker issue #1"]
+        B --> C["Architecture<br/>DECISIONS.md, D1-D9"]
+        C --> D["Stories S0-S11<br/>tracker issue #1"]
     end
 
     subgraph LOOP["PER-STORY LOOP"]
         direction TB
-        E["docs/stories/S#.md<br/>design doc — intent BEFORE code<br/>(diagrams, interfaces, acceptance)"]
-        E -->|"gate: human passes the design"| F["Generate<br/>Claude, directed by the doc"]
+        E["docs/stories/S#.md<br/>design doc, written before code<br/>(diagrams, interfaces, acceptance)"]
+        E -->|"gate: design approved"| F["Generate<br/>(Claude, directed by the doc)"]
         F --> G{"Review gate<br/>HUMAN"}
         G -->|"corrections"| F
         G -->|"pass"| H["REVIEW stamp in story doc<br/>+ WORKLOG.md entry"]
-        H --> I["Commit keyed S#/FR-#<br/>→ story PR"]
+        H --> I["Commit keyed S#/FR-#<br/>then story PR"]
         I --> J{"PR review<br/>human + Codex (automated)"}
         J -->|"findings"| F
         J -->|"approve"| K["Merge to main<br/>tracker box checked"]
@@ -55,32 +55,31 @@ flowchart TB
     class A,B,C,D,E,H,I,K artifact
 ```
 
-Red-bordered nodes are human decision points; cyan is directed generation;
-everything else is a committed artifact. Corrections flow backward — including
-findings from the automated PR reviewer — and every cycle is recorded in the
-worklog. This diagram is itself the process that produced this repository.
+Red border marks a human decision point. Cyan marks directed generation. Grey
+marks a committed artifact. Corrections flow backward, including findings from
+the automated PR reviewer, and each cycle is recorded in the worklog.
 
-- **Specifications are the prompts.** The LLM builds from `REQUIREMENTS.md`, the
-  per-story design docs, and explicit architecture rulings (`DECISIONS.md`) — not
-  from ad-hoc instructions.
-- **Nothing merges unreviewed.** Each story doc carries a human REVIEW stamp
-  recording what was checked, corrected, or rejected at the gate.
-- **The trail is auditable:** [`LLM.md`](LLM.md) (disclosure) ·
-  [`docs/llm/WORKLOG.md`](docs/llm/WORKLOG.md) (live gate log) ·
-  [`DECISIONS.md`](DECISIONS.md) (rulings) · story-keyed commit history.
+Three rules govern the loop. The specifications are the prompts: generation
+works from [`REQUIREMENTS.md`](REQUIREMENTS.md), the per-story design docs, and
+the rulings in [`DECISIONS.md`](DECISIONS.md), not from ad-hoc instructions.
+Nothing merges unreviewed: every story doc carries a REVIEW stamp recording what
+was checked, corrected, or rejected. The trail is auditable:
+[`LLM.md`](LLM.md), [`docs/llm/WORKLOG.md`](docs/llm/WORKLOG.md), and the
+story-keyed commit history.
 
 ## Design
 
-The visual system ("instrumentation as draughtsmanship") was extracted from a
-personally curated reference board via an AI vision pipeline, then human-ruled:
-palette, layout, and six taste tensions resolved before the first line of code.
-Interactive components carry a glass grammar adapted from my own prior design
-system. Full rationale lands in `docs/DESIGN.md` at ship.
+The visual direction was extracted from a reference board I curate, using an AI
+vision pipeline, then ruled by hand: palette, layout, and six taste tensions
+were resolved before the first line of code. Interactive components use a glass
+treatment adapted from my own prior design system. Non-interactive surfaces stay
+flat. Full rationale lands in `docs/DESIGN.md` at ship.
 
-## Architecture (summary)
+## Architecture
 
-npm workspaces monorepo — `server/` (Fastify + ws: 1 Hz simulation core, all
-derived truth computed server-side) · `client/` (Vite + React + TS + plain
-Leaflet: rendering and gestures only) · `shared/types.ts` (the wire contract
-both sides import). REST carries commands; the WebSocket carries state, one way.
-Full tradeoffs in `DECISIONS.md`.
+npm workspaces monorepo. `server/` runs the 1 Hz simulation core on Fastify and
+computes all derived state (TTE, breach, threat) so clients never disagree.
+`client/` is Vite, React, TypeScript, and plain Leaflet, responsible for
+rendering and gestures only. `shared/types.ts` is the wire contract both sides
+import. REST carries commands. The WebSocket carries state, one way. Tradeoffs
+are recorded in [`DECISIONS.md`](DECISIONS.md).
