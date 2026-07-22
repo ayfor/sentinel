@@ -63,7 +63,8 @@ Three rules govern the loop. The specifications are the prompts: generation
 works from [`REQUIREMENTS.md`](REQUIREMENTS.md), the per-story design docs, and
 the rulings in [`DECISIONS.md`](DECISIONS.md), not from ad-hoc instructions.
 Nothing merges unreviewed: every story doc carries a REVIEW stamp recording what
-was checked, corrected, or rejected. The trail is auditable:
+was checked, corrected, or rejected, transcribed from review comments on the
+story PR. The trail is auditable:
 [`LLM.md`](LLM.md), [`docs/llm/WORKLOG.md`](docs/llm/WORKLOG.md), and the
 story-keyed commit history.
 

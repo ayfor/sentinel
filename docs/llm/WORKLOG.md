@@ -1,7 +1,10 @@
 # LLM Worklog
 
-Append-only, written at each review gate — directives, what was generated, what the
-human changed. Verbatim quotes are the operator's own words at the gate. Times ET.
+Append-only, written at each review gate: directives, what was generated, what the
+human changed. Verbatim quotes are the operator's own words at the gate. Human
+review comments left on story PRs are transcribed here and into the story doc's
+REVIEW field at gate close; the operator writes review notes once, on the PR.
+Times ET.
 
 ## Pre-code · Jul 20 (night) — Design system via taste extraction
 SPEC — operator's curated 24-pin reference board ("sentinel", Pinterest)
