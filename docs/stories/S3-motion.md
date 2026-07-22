@@ -114,4 +114,17 @@ a visibilitychange handler holds at the latest fix on return instead of
 rubber-banding; and pair rotation now anchors at the marker's actual rendered
 position, making arrival jitter mathematically unable to cause snaps.
 
-Gate stamp: pending PR review and merge.
+### Round 4 - Deferral Ruling (Verbatim)
+
+> Its not the pane, its likely the leaflet page render animation. Instead of chasing this., lets strip out the smoothing and defer to a future story following the asset coordination one
+
+### Disposition (Round 4)
+
+Story deferred, rescheduled after S12 (traffic structure). Prime suspect
+recorded for the resumption: Leaflet's canvas renderer batches repaints
+through its own requestAnimationFrame, so model-position updates from the
+interval fallback do not repaint under rAF suspension — positions glide,
+pixels freeze, then snap on the next painted frame. The resumption path is
+forcing synchronous canvas redraws in the fallback, or driving the renderer
+directly. The 1 Hz stepping of S2 is acceptable operator-console behavior in
+the interim. Branch and PR preserved unmerged as the resumption point.
