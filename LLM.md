@@ -32,9 +32,11 @@ excerpted verbatim in the worklog.
 
 ## Workflow & prompting
 
-Requirements → stories (issue #1) → per-story design doc (intent before code) →
-generation → human review gate (corrections recorded in the story doc's REVIEW
-field) → story-keyed commit → PR. Prompting is therefore structured specification,
-not ad-hoc instruction; the worklog records each gate's directives, what was
-generated, and what the human changed. The review gate cycle is deliberate:
-feedback at every stage, recorded where it happened.
+The workflow is the pipeline diagrammed in the
+[README](README.md#the-process--from-requirements-to-prs) — not repeated here.
+What this disclosure adds: **how the model was prompted, and where the evidence
+is.** Prompting was structured specification rather than ad-hoc instruction —
+the documents above were the prompts. Conversational directives at each gate are
+excerpted verbatim in [`docs/llm/WORKLOG.md`](docs/llm/WORKLOG.md), one entry per
+gate, alongside what was generated and what the human corrected or rejected
+(also stamped in each story doc's REVIEW field).
