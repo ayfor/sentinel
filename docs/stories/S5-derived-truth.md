@@ -43,8 +43,12 @@ flowchart LR
     P -->|"none inside"| N["null (no entry)"]
     Z --> B["pointInPolygon now"]
     B -->|"inside"| C["CRITICAL, TTE 0"]
-    T -->|"&le; 120 s"| W["WARNING"]
+    T -->|"&le; 120 s (FR-7)"| W["WARNING"]
     T -->|"&gt; 120 s"| OK["NORMAL"]
+    N --> OK
+    A --> D["min edge distance<br/>across zones"]
+    Z --> D
+    D --> M["nearestZoneMeters"]
 ```
 
 ## Decisions

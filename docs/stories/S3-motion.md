@@ -45,7 +45,16 @@ sequenceDiagram
         MOTION->>MOTION: alpha = (renderTime - t1) / (t2 - t1), clamped
         MOTION->>LAYER: setLatLng(lerp(prev, latest, alpha))
     end
+    alt latest fix older than 2 tick intervals
+        MOTION->>LAYER: hold at latest fix (never extrapolate)
+    end
+    alt fix jump above 5 km (respawn or feed switch)
+        MOTION->>LAYER: snap to latest fix (no glide)
+    end
 ```
+
+The server does not appear: motion is a pure client concern consuming fixes the
+store already holds. That absence is the design.
 
 ## Decisions
 

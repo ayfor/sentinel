@@ -50,10 +50,14 @@ sequenceDiagram
         participant STOREB as worldStore B
     end
     GEO->>REST: ring
-    REST->>WORLD: validate, assign RZ-##, store
-    WORLD->>CAST: zones changed
-    CAST->>STOREA: zones message
-    CAST->>STOREB: zones message
+    alt ring valid (3+ finite points in bounds)
+        REST->>WORLD: assign RZ-##, store
+        WORLD->>CAST: zones changed
+        CAST->>STOREA: zones message
+        CAST->>STOREB: zones message
+    else invalid ring
+        REST->>GEO: 400 with reason, no broadcast, local layer discarded
+    end
 ```
 
 ## Decisions

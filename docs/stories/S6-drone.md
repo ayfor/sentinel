@@ -44,9 +44,10 @@ Drone state already travels in every tick message (S1 contract).
 
 ```mermaid
 flowchart LR
-    I["idle<br/>no path"] -->|"path drawn"| P["patrol<br/>waypoints, 90 m/s"]
-    P -->|"breach exists"| S["shadow<br/>nearest breacher, 140 m/s<br/>20% retarget hysteresis"]
-    S -->|"no breachers"| P
+    I["idle<br/>no path"] -->|"path drawn (SENTINEL event)"| P["patrol<br/>waypoints, 90 m/s"]
+    P -->|"breach exists (SENTINEL event, names target)"| S["shadow<br/>nearest breacher, 140 m/s"]
+    S -->|"another breacher &gt;20% nearer (retarget, SENTINEL event)"| S
+    S -->|"no breachers (SENTINEL event)"| P
     P -->|"path deleted"| I
     S -->|"path deleted and no breachers"| I
 ```

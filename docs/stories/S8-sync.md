@@ -32,11 +32,12 @@ and upgrades client connection behavior.
 
 ```mermaid
 flowchart LR
-    L["LIVE<br/>cyan"] -->|"no tick &gt; 3 s, socket open"| S["STALE<br/>amber"]
+    K["CONNECTING<br/>dim (initial, and during backoff)"] -->|"socket open + snapshot"| L["LIVE<br/>cyan"]
+    L -->|"no tick &gt; 3 s, socket open"| S["STALE<br/>amber"]
     S -->|"tick arrives"| L
     L -->|"socket close"| C["CLOSED<br/>red"]
     S -->|"socket close"| C
-    C -->|"reconnect + snapshot"| L
+    C -->|"backoff retry"| K
 ```
 
 ## Decisions
