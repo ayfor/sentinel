@@ -26,8 +26,14 @@ placeholders until S5 computes them.
   and no broadcast:
   1. 3+ vertices after normalizing away a duplicated closing point (first ==
      last is tolerated and stripped).
-  2. Every coordinate finite: lat in [-90, 90], lng in [-180, 180], no NaN or
-     Infinity.
+  2. Every coordinate finite and within the WGS84 coordinate domain: lat in
+     [-90, 90], lng in [-180, 180], no NaN or Infinity. Deliberately NOT
+     restricted to the sector box: the sector is a view and spawn convention
+     invisible to the operator, and rejecting a harmless ring against an
+     unmarked boundary would be a confusing 400. The viewport naturally
+     scopes where zones get drawn. Exclusion, recorded: rings crossing the
+     antimeridian are out of scope (containment would need longitude
+     unwrapping; the sector sits at -78 to -73).
   3. No zero-length edges (consecutive duplicate vertices).
   4. Non-degenerate: nonzero area (an all-collinear ring has no interior, so
      breach against it is meaningless).
@@ -161,4 +167,14 @@ enter the shared event stream). Sequence diagram carries the notice in the
 invalid branch. Prevention remains the primary UX; the notice is the
 server-authoritative safety net.
 
-Pending design gate, round 4.
+### Round 4 - Design Gate, Operator Comments (Verbatim)
+
+> What defines valid bounds for the ring?
+
+### Disposition (Round 4)
+
+Clause 2 clarified: bounds are the WGS84 coordinate domain, deliberately not
+the sector box (invisible boundary, harmless violation, confusing rejection);
+antimeridian-crossing rings recorded as out of scope with the reason.
+
+Pending design gate, round 5.
