@@ -89,19 +89,25 @@ S2 adds no messages or endpoints; it consumes the S1 contract.
 
 ## Decisions
 
-- The asset layer subscribes to the store imperatively, outside the React tree:
+Story-local decisions are numbered for citation from code (S2#dN, operator
+convention adopted this story).
+
+- d1: The asset layer subscribes to the store imperatively, outside the React tree:
   per-tick marker updates bypass reconciliation entirely, and S3's
   requestAnimationFrame loop slots into the same layer module without moving a
   single component boundary.
-- `L.circleMarker` over `divIcon`: canvas-batched dots scale to hundreds of
+- d2: `L.circleMarker` over `divIcon`: canvas-batched dots scale to hundreds of
   markers; DOM icons do not. Symbology upgrades (S9) restyle the same markers.
-- Assets replace wholesale each tick (matching D8's full-state wire) rather
+- d3: Assets replace wholesale each tick (matching D8's full-state wire) rather
   than patching: no diff bookkeeping, and the store can never drift from the
   server. Stated plainly: there is no age-out. An asset present on the client
   but absent from a subsequent tick is disposed of immediately, store and
   marker both. Flag for S7: a selected asset can be wiped from client state
   while its panel is open; the selection path must handle the missing record
   (the TRACK LOST behavior in FR-4) rather than assume its data source exists.
+- d4: The client event cap (50) mirrors the server's snapshot cap: recent
+  operational context, not an audit trail; identical windows on both sides
+  regardless of session age.
 
 ## Acceptance
 
@@ -132,4 +138,19 @@ titleized here and as standing convention. Decision 3 states the no-age-out
 disposal semantics plainly and flags the selected-asset wipe for S7's TRACK
 LOST path.
 
-Gate stamp: pending round 2.
+### Round 2 - PR Review Comments (Verbatim)
+
+> Document here the design decision for this constant. May warrant at this point having a nomenclature for these decision points
+>
+> e.g., S3#d2
+
+External (Codex, P1): hard-coded ws scheme is mixed content under HTTPS.
+
+### Disposition (Round 2)
+
+Decision-point nomenclature adopted as standing convention: story-local
+decisions numbered dN, cited from code as S#dN. EVENT_CAPACITY documented in
+place citing S2#d4 (added to Decisions). WebSocket scheme now derives from
+location.protocol (ws or wss).
+
+Gate stamp: pending merge.

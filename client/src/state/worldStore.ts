@@ -10,7 +10,12 @@ import type {
 
 export type ConnectionState = 'connecting' | 'live' | 'closed';
 
-/** Client-side event cap, mirroring the server's snapshot cap. */
+/**
+ * Client event cap mirrors the server's snapshot cap (S2#d4): the log drawer
+ * (S8) shows recent operational context, not an audit trail; capping identically
+ * on both sides means a reconnect snapshot and a long-lived session hold the
+ * same window.
+ */
 const EVENT_CAPACITY = 50;
 
 interface WorldState {

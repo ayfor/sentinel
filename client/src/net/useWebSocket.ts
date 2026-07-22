@@ -18,7 +18,8 @@ export function useWebSocket(): void {
 
     const connect = () => {
       store.setConnection('connecting');
-      socket = new WebSocket(`ws://${location.host}/ws`);
+      const scheme = location.protocol === 'https:' ? 'wss' : 'ws';
+      socket = new WebSocket(`${scheme}://${location.host}/ws`);
 
       socket.onopen = () => store.setConnection('live');
 
