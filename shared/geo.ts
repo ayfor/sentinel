@@ -4,13 +4,14 @@
 import type { LatLng } from './types.js';
 
 const EARTH_RADIUS_M = 6371000;
+export const FULL_CIRCLE_DEG = 360;
 
 const toRad = (deg: number) => (deg * Math.PI) / 180;
 const toDeg = (rad: number) => (rad * 180) / Math.PI;
 
 /** Normalize a bearing into [0, 360). */
 export function normalizeBearing(deg: number): number {
-  return ((deg % 360) + 360) % 360;
+  return ((deg % FULL_CIRCLE_DEG) + FULL_CIRCLE_DEG) % FULL_CIRCLE_DEG;
 }
 
 /** Great-circle distance in meters. */

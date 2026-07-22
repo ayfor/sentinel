@@ -1,5 +1,5 @@
 import type { Asset, LatLng } from '../../shared/types.js';
-import { bearingDeg, normalizeBearing } from '../../shared/geo.js';
+import { FULL_CIRCLE_DEG, bearingDeg, normalizeBearing } from '../../shared/geo.js';
 import type { World } from './world.js';
 
 /** Spawn box around the Ottawa sector, matching the client's default view. */
@@ -29,7 +29,7 @@ export function spawnAssets(world: World): void {
       id: `asset-${i}`,
       callsign,
       pos: { lat: rand(SECTOR.latMin, SECTOR.latMax), lng: rand(SECTOR.lngMin, SECTOR.lngMax) },
-      headingDeg: rand(0, 360),
+      headingDeg: rand(0, FULL_CIRCLE_DEG),
       speedMps: rand(140, 250),
       altitudeM: rand(6000, 12000),
       threat: 'NORMAL',

@@ -149,4 +149,11 @@ description (standing convention).
   span) that existed only to carry annotations and matched nothing at runtime.
   Removed; the annotation now lives on the one real field and the prose.
 
-PR gate: pending operator review and merge of PR #15.
+### Round 4 - PR Review Comments (Verbatim)
+
+> Prefer to use const instead of redeclaring 360 value
+
+Disposition: FULL_CIRCLE_DEG exported from shared/geo.ts, used in
+normalizeBearing and the generator's heading spawn.
+
+PR gate: pending operator merge of PR #15.
