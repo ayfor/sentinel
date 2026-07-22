@@ -42,11 +42,12 @@ flowchart LR
 
 ## Decisions
 
-- Stale is measured by tick age, not socket state: a wedged server with an
+Story-local decisions are numbered for citation from code (S8#dN).
+- d1: Stale is measured by tick age, not socket state: a wedged server with an
   open socket is the exact failure a socket-state indicator misses.
-- Backoff caps at 15 s: an operator console should keep trying visibly, not
+- d2: Backoff caps at 15 s: an operator console should keep trying visibly, not
   give up quietly.
-- The event drawer reuses the inspector's glass mechanics (same tokens, same
+- d3: The event drawer reuses the inspector's glass mechanics (same tokens, same
   slide behavior) rather than inventing a second panel language.
 
 ## Acceptance
