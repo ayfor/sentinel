@@ -1,7 +1,8 @@
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
-import type { HealthResponse } from '../../shared/types.js';
-import { createWorld } from './world.js';
+import type { HealthResponse, LatLng } from '../../shared/types.js';
+import { createWorld, pushEvent } from './world.js';
+import { createZone, validateRing } from './zones.js';
 import { spawnAssets, ASSET_COUNT } from './generator.js';
 import { startTick } from './tick.js';
 import { Broadcaster } from './broadcast.js';
@@ -23,6 +24,36 @@ app.get('/api/health', async (): Promise<HealthResponse> => ({ ok: true }));
 
 app.get('/ws', { websocket: true }, (socket) => {
   broadcaster.add(socket);
+});
+
+let eventCounter = 0;
+const emitEvent = (kind: 'ZONE' | 'BREACH' | 'SENTINEL' | 'FEED', text: string) => {
+  const event = { id: `event-${++eventCounter}`, timestampMs: Date.now(), kind, text };
+  pushEvent(world, event);
+  broadcaster.broadcast({ type: 'event', event });
+};
+
+app.post('/api/zones', async (req, reply) => {
+  const body = req.body as { ring?: LatLng[] } | null;
+  const result = validateRing(body?.ring);
+  if (!result.ok) {
+    return reply.code(400).send({ reason: result.reason });
+  }
+  const zone = createZone(result.ring, ++world.zoneCounter);
+  world.zones.push(zone);
+  broadcaster.broadcast({ type: 'zones', zones: world.zones });
+  emitEvent('ZONE', `${zone.name} created by operator (${zone.ring.length} vertices)`);
+  return reply.code(201).send(zone);
+});
+
+app.delete('/api/zones/:id', async (req, reply) => {
+  const { id } = req.params as { id: string };
+  const index = world.zones.findIndex((z) => z.id === id);
+  if (index === -1) return reply.code(404).send({ reason: 'unknown zone id' });
+  const [removed] = world.zones.splice(index, 1);
+  broadcaster.broadcast({ type: 'zones', zones: world.zones });
+  emitEvent('ZONE', `${removed!.name} deleted by operator`);
+  return reply.code(204).send();
 });
 
 await app.listen({ port: PORT, host: '0.0.0.0' });

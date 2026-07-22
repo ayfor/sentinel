@@ -131,6 +131,11 @@ Story-local decisions are numbered for citation from code (S4#dN).
   shared operational context for all operators, and a single tab's invalid
   submission is not. The 400 response body is already private to the
   submitter; the notice chip surfaces it.
+- d5 (build): validation clause 5 (simplicity) is evaluated before clause 4
+  (non-degenerate area). A symmetric figure-eight has zero signed area (its
+  lobes cancel in the shoelace sum), so testing degeneracy first misreports
+  self-intersection as collinearity. Caught during build verification; the
+  clause list itself is unchanged, only evaluation order.
 
 ## Acceptance
 
@@ -201,4 +206,18 @@ records the deliberate deviation from GeoJSON explicit closure with the
 clause-1 bridge. Previously detailed only as a types.ts comment and the ERD
 field annotation.
 
-Pending design gate, round 6.
+### Round 6 - Design Gate, Operator Comments (Verbatim)
+
+> Approved, proceed with S4
+
+### Disposition (Round 6)
+
+Gate closed. Build verification: all six clauses exercised via curl (arity,
+WGS84 domain, duplicate vertices, collinearity, figure-eight, vertex cap);
+explicit closure stripped and normalized; designators stayed monotonic across
+a delete (RZ-02 deleted, next zone minted RZ-04, no reuse); ZONE events in
+the snapshot ledger; zones render in the client from broadcast state with
+centroid designator labels, and a hand-drawn geoman polygon round-tripped
+through POST, broadcast, and re-render. One build finding recorded as S4#d5
+(clause evaluation order). Component diagram re-verified: README already
+lists the zone layer and /api/zones; no delta.
