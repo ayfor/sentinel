@@ -153,4 +153,4 @@ decisions numbered dN, cited from code as S#dN. EVENT_CAPACITY documented in
 place citing S2#d4 (added to Decisions). WebSocket scheme now derives from
 location.protocol (ws or wss).
 
-Gate stamp: pending merge.
+Gate stamp (verbatim): "S2 merged" — operator, following two review rounds.

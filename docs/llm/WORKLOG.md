@@ -72,3 +72,19 @@ TICK_MS), an understated memory estimate (corrected to ~0.9 MB), and two
 fabricated ERD pseudo-columns (removed); PR inline comments (FULL_CIRCLE_DEG
 const, timestampMs renames, EventKind extraction, verbose tick locals,
 step-by-step destinationPoint docs). Merged as PR #15; issue #4 closed.
+
+## S2 · Jul 22 ~00:15-02:30 — Asset render
+SPEC — docs/stories/S2-asset-render.md (design gate: sequence-diagram revision
+rounds incl. client/server boxes and the failure case, all verbatim in doc)
+GENERATED — useWebSocket, Zustand world store, imperative canvas assetLayer,
+StatusBar. ~4 files.
+GATE — verification: strict typecheck, live preview (120 tracks, FEED LIVE);
+invalid-hook-call console noise investigated via page instrumentation and
+ruled a dev-only HMR transient (clean on every cold load).
+HUMAN REVIEW — verbatim in doc: design-gate rounds (sequence diagram, boxes,
+failure case, titleized tables, no-age-out disposal semantics with the S7
+selected-asset flag); PR rounds (EVENT_CAPACITY documentation birthing the
+S#dN decision-point nomenclature, operator; wss scheme under HTTPS, Codex P1);
+functional-testing comment (pan-vs-click, no hover) scoped to S7 and recorded
+there, improving its hit-slop design to renderer tolerance. Merged as PR #16;
+issue #5 closed.
