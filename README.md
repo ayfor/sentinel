@@ -8,7 +8,7 @@ A live airspace console over the Ottawa sector which includes the following:
 - An autonomous patrol drone that shadows zone breachers
 - Multi-client sync over a server-authoritative WebSocket
 
-Status: build in progress. Story tracker: [#1](https://github.com/ayfor/sentinel/issues/1).
+Status: build in progress. Story tracker: [issues](https://github.com/ayfor/sentinel/issues).
 
 ## Quickstart
 
@@ -30,7 +30,7 @@ flowchart TB
         direction LR
         A["Assessment brief"] --> B["REQUIREMENTS.md<br/>FR-1..7 including rulings"]
         B --> C["Architecture<br/>DECISIONS.md, D1-D9"]
-        C --> D["Stories S0-S11<br/>tracker issue #1"]
+        C --> D["Stories S0-S11<br/>one issue each, epic #1"]
     end
 
     subgraph LOOP["PER-STORY LOOP"]
