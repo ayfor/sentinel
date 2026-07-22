@@ -49,11 +49,15 @@ Client store state (no new wire types; the store mirrors the contract):
 
 ```mermaid
 sequenceDiagram
-    participant WS as /ws socket
-    participant HOOK as useWebSocket
-    participant STORE as worldStore (Zustand)
-    participant LAYER as assetLayer (canvas)
-    participant BAR as Top bar (React)
+    box Server
+        participant WS as /ws (broadcaster)
+    end
+    box Client (browser)
+        participant HOOK as useWebSocket
+        participant STORE as worldStore (Zustand)
+        participant LAYER as assetLayer (canvas)
+        participant BAR as Top bar (React)
+    end
     WS->>HOOK: snapshot
     HOOK->>STORE: applySnapshot
     STORE->>LAYER: subscribe callback, imperative diff (add all markers)
