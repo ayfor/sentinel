@@ -110,11 +110,12 @@ S2 adds no messages or endpoints; it consumes the S1 contract.
 
 > - Flowchart I think would be more clear with a sequence diagram or at least borders to delineate the separation between
 > - Titleize table headers for the endpoint tables
+> - Delineate between client and server in the sequence diagram
 > - Infer plainly in decision 3 that there is no age-out and assets that are existing at the client and arent in a subsequent tick are disposed of. We will need to flag what to do about data being display for selected assets when they are wiped from the client state record.
 
 ### Disposition
 
-Flowchart replaced with a sequence diagram (participants delineate the layers;
+Flowchart replaced with a sequence diagram; server and client participants grouped in labeled boxes (round 1.1). Participants delineate the layers;
 the tick loop and the diff behavior are now explicit in time). Table headers
 titleized here and as standing convention. Decision 3 states the no-age-out
 disposal semantics plainly and flags the selected-asset wipe for S7's TRACK
