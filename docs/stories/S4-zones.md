@@ -25,6 +25,25 @@ placeholders until S5 computes them.
 
 ## Interfaces
 
+### Data Model
+
+```mermaid
+erDiagram
+    WORLD ||--o{ ZONE : "holds, server-side only"
+    ZONE {
+        string id "server-assigned, stable across broadcasts"
+        string name "designator RZ-01, RZ-02 ... server-assigned in creation order"
+        LatLng_array ring "3+ vertices, closed implicitly, first point not repeated"
+    }
+    ZONE ||..o{ ASSET : "derives TTE, breach, nearestZoneMeters (S5)"
+```
+
+ZONE is the `ZonePolygon` wire type from the S1 contract, populated for the
+first time here; no wire change. The ring is stored exactly as drawn (no
+simplification, no vertex editing per the FR-2 ruling), and the dotted
+relationship is computed by S5, not stored: zones hold no references to
+assets.
+
 ### Messages and Endpoints
 
 | Name | Type | Action | Payload | Description |
@@ -80,4 +99,15 @@ Story-local decisions are numbered for citation from code (S4#dN).
 
 ## Review
 
-Pending design gate.
+### Round 1 - Design Gate, Operator Comments (Verbatim)
+
+> Do we have a model of zone for the s4 design doc? like ERD?
+
+### Disposition
+
+It was missing. Data Model section added: the ZONE entity with field
+annotations (server-assigned id and designator, ring storage rule), its
+containment in WORLD, and the dotted computed-not-stored relationship to
+assets via S5. Noted as the S1 contract type populated here, no wire change.
+
+Pending design gate, round 2.
