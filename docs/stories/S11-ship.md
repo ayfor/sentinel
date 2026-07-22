@@ -32,9 +32,10 @@ None. This story ships the others.
 
 ## Decisions
 
-- Clean-checkout verification is the acceptance bar for the quickstart: the
+Story-local decisions are numbered for citation from code (S11#dN).
+- d1: Clean-checkout verification is the acceptance bar for the quickstart: the
   reviewer's first command must work on a machine that is not this one.
-- The video demonstrates failure handling on purpose (stale, TRACK LOST):
+- d2: The video demonstrates failure handling on purpose (stale, TRACK LOST):
   showing degradation is the operator-console story, not a weakness.
 
 ## Acceptance
