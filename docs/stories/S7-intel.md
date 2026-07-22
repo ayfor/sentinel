@@ -78,6 +78,13 @@ Story-local decisions are numbered for citation from code (S7#dN).
   visually identical, an order of magnitude fewer layers.
 - d3: The prediction uses the same averaging window the buffer holds; less than 5
   minutes of life means averaging what exists (matches FR-4 ruling).
+- d4: Map panning keeps the drag-to-pan convention (operator ruling). A
+  spacebar-modified pan was considered to eliminate the pan-vs-click conflict
+  outright, but drag-to-pan is the universal convention of map interfaces and
+  a reviewer's first touch must not read as broken; the renderer tolerance
+  (8 px) is expected to absorb the misfires. If functional testing with
+  tolerance still fights, spacebar pan with a persistent on-screen hint is
+  the approved fast-follow inside this story.
 
 ## Acceptance
 
@@ -96,6 +103,13 @@ Story-local decisions are numbered for citation from code (S7#dN).
 
 (Second comment arrived on the S2 PR during functional testing; interaction is
 S7 scope, so it lands here.)
+
+> Can we add pan controls to the map instead of keeping it always on? Open to the space-bar modified for pan as is common applications if that happens to be out of the box.
+
+> Lets go with B. Can record in the relevant design that there was a decision here
+
+(Options presented: A spacebar pan with hint; B convention plus tolerance,
+spacebar as evidence-gated fast-follow. Operator ruled B; recorded as S7#d4.)
 
 Disposition: hover ring in Design; selected state persists the ring solid;
 ink at 40 percent per the color budget. Hit-slop mechanism revised per the
