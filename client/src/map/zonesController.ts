@@ -13,7 +13,7 @@ import { useUiStore } from '../state/uiStore';
  */
 export function attachZonesController(map: L.Map, resyncZones: () => void): () => void {
   map.pm.addControls({
-    position: 'bottomright',
+    position: 'topright',
     drawPolygon: true,
     removalMode: true,
     drawMarker: false,

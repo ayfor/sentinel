@@ -221,3 +221,13 @@ centroid designator labels, and a hand-drawn geoman polygon round-tripped
 through POST, broadcast, and re-render. One build finding recorded as S4#d5
 (clause evaluation order). Component diagram re-verified: README already
 lists the zone layer and /api/zones; no delta.
+
+### Build Feedback - Operator Comments (Verbatim)
+
+> Lets enlarge the buttons and place them in the upper-right hand corner of the page. They should at least double in padding
+
+### Disposition (Build Feedback)
+
+Geoman toolbar moved from bottom right to top right (offset below the status
+bar) and buttons enlarged to 44 px with 12 px padding, icons scaled to fit.
+Verified in the live preview alongside a rendered zone.
