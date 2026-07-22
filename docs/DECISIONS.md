@@ -14,6 +14,7 @@ live in `docs/stories/`; these are the ones that shape the system.
 | D7 | Server routes carry `/api` prefix explicitly | Vite proxy forwards verbatim; production reverse proxy sees the same shape; no rewrite magic | Proxy path rewriting |
 | D8 | Full asset-state broadcast every tick (~10 KB/s at 150 assets), not diffs | The wire carries the whole truth every second — eliminates drift-bug class; zones/patrol/events broadcast on change only | Diffed deltas (bandwidth win too small to buy the complexity) |
 | D9 | Generator is the demo-default data source; live public feed is a toggle | The demo can never be taken down by a third-party API; shipping both is the resilience story | Live-API-only (external dependency at evaluation time) |
+| D10 | No CSS framework; token sheet plus component classes | A lot of overhead for relatively few components; the design language is bespoke recipes (glass, corner ticks, grain) that want named classes. Reconsider if scope grows to more unique pages and workflows beyond map and asset control | Tailwind (the studio default elsewhere) |
 
 Design-system rulings (palette, layout OPT-B + slide-out panels, glass grammar for
 interactables, six taste tensions T1–T6) are summarized in `docs/DESIGN.md` at ship;
