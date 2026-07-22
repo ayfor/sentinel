@@ -2,8 +2,8 @@
 
 Per the assessment's LLM-use requirements: model, role breakdown, specifications
 given, and workflow & prompting. The full description of the pipeline lives in the
-[README](README.md#the-process--from-requirements-to-prs); the live per-gate log is
-[`docs/llm/WORKLOG.md`](docs/llm/WORKLOG.md).
+[README](../README.md#process); the live per-gate log is
+[`docs/llm/WORKLOG.md`](llm/WORKLOG.md).
 
 ## Model
 
@@ -25,7 +25,7 @@ persistent session with repository, browser-preview, and design-tool access.
 ## Specifications given to the LLM
 
 The specification corpus is in-tree and version-controlled — it *is* the prompt
-material: [`REQUIREMENTS.md`](REQUIREMENTS.md) · [`DECISIONS.md`](DECISIONS.md) ·
+material: [`docs/REQUIREMENTS.md`](REQUIREMENTS.md) · [`docs/DECISIONS.md`](DECISIONS.md) ·
 [`docs/stories/*.md`](docs/stories/) · the design-token sheet
 (`client/src/styles/tokens.css`). Conversational directives at each gate are
 excerpted verbatim in the worklog.
@@ -33,10 +33,10 @@ excerpted verbatim in the worklog.
 ## Workflow & prompting
 
 The workflow is the pipeline diagrammed in the
-[README](README.md#the-process--from-requirements-to-prs) — not repeated here.
+[README](../README.md#process) — not repeated here.
 What this disclosure adds: **how the model was prompted, and where the evidence
 is.** Prompting was structured specification rather than ad-hoc instruction —
 the documents above were the prompts. Conversational directives at each gate are
-excerpted verbatim in [`docs/llm/WORKLOG.md`](docs/llm/WORKLOG.md), one entry per
+excerpted verbatim in [`docs/llm/WORKLOG.md`](llm/WORKLOG.md), one entry per
 gate, alongside what was generated and what the human corrected or rejected
 (also stamped in each story doc's REVIEW field).
