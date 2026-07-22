@@ -53,13 +53,14 @@ flowchart LR
 
 ## Decisions
 
-- Sampled projection over analytic great-circle-vs-polygon intersection: the
+Story-local decisions are numbered for citation from code (S5#dN).
+- d1: Sampled projection over analytic great-circle-vs-polygon intersection: the
   bound is explicit (1 s resolution, 600 s horizon), the code is readable, and
   the cost is trivial at this scale (about 72k point tests per tick worst
   case). The analytic version is the optimization nobody asked for.
-- 600 s horizon: beyond ten minutes a straight-line prediction is fiction;
+- d2: 600 s horizon: beyond ten minutes a straight-line prediction is fiction;
   null is more honest than a large number.
-- Derivation stays out of the world module: pure inputs to pure outputs, which
+- d3: Derivation stays out of the world module: pure inputs to pure outputs, which
   is what makes the tests hand-checkable.
 
 ## Acceptance
