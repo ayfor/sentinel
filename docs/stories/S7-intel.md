@@ -67,11 +67,12 @@ sequenceDiagram
 
 ## Decisions
 
-- History over REST instead of the wire: on-demand data for one asset does not
+Story-local decisions are numbered for citation from code (S7#dN).
+- d1: History over REST instead of the wire: on-demand data for one asset does not
   belong in a broadcast every client pays for each second.
-- Trail fade via bucketed segments (about 10) instead of per-point opacity:
+- d2: Trail fade via bucketed segments (about 10) instead of per-point opacity:
   visually identical, an order of magnitude fewer layers.
-- The prediction uses the same averaging window the buffer holds; less than 5
+- d3: The prediction uses the same averaging window the buffer holds; less than 5
   minutes of life means averaging what exists (matches FR-4 ruling).
 
 ## Acceptance
