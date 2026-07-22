@@ -125,4 +125,28 @@ documented as the enumerated state union in `shared/types.ts` now; `tteS` rename
 pattern); interface table rekeyed to name, type (REST | WebSocket), action, payload,
 description (standing convention).
 
-Gate stamp: pending round 2.
+### Round 2 - Design Gate Stamp (Verbatim)
+
+> Approved, proceed with S1
+
+### Round 3 - PR Window, Operator Questions (Verbatim)
+
+> One thing that came to mind, why 300 for track_history?
+
+> why is the log called "fix"?
+
+> nope thats fine. Worth recording in the design doc. Also, why is there a String span with 5 min at 1 Hz?
+
+### Disposition (Round 3)
+
+- Why 300: the number is derived, not chosen (FR-4's 5-minute window at the 1 Hz
+  tick rate). The question exposed a magic number and an understated memory
+  estimate; HISTORY_CAPACITY now computes from HISTORY_WINDOW_S and TICK_MS in
+  code, and the doc records the derivation with the corrected ~0.9 MB raw cost.
+- Why "fix": navigation domain idiom (a position fix; a track is a time-ordered
+  sequence of fixes). Ruled kept; rationale recorded in the Data Model prose.
+- String span: the question caught two fabricated ERD pseudo-columns (policy,
+  span) that existed only to carry annotations and matched nothing at runtime.
+  Removed; the annotation now lives on the one real field and the prose.
+
+PR gate: pending operator review and merge of PR #15.
