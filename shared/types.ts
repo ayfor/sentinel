@@ -9,7 +9,7 @@ export interface LatLng {
 /** One recorded position sample. Track histories are arrays of these. */
 export interface Fix {
   pos: LatLng;
-  t: number; // epoch ms
+  timestampMs: number; // epoch ms
 }
 
 /** Enumerated threat states. S1 emits NORMAL; S5 computes the real value. */
@@ -55,10 +55,12 @@ export interface DroneState {
   targetId: string | null;
 }
 
+export type EventKind = 'ZONE' | 'BREACH' | 'SENTINEL' | 'FEED';
+
 export interface EventEntry {
   id: string;
-  t: number; // epoch ms
-  kind: 'ZONE' | 'BREACH' | 'SENTINEL' | 'FEED';
+  timestampMs: number; // epoch ms
+  kind: EventKind;
   text: string;
 }
 
@@ -73,7 +75,7 @@ export interface WorldSnapshot {
 /** Server-to-client messages. The socket is one-way (D1); commands travel REST. */
 export type WsMessage =
   | { type: 'snapshot'; world: WorldSnapshot }
-  | { type: 'tick'; t: number; assets: Asset[]; drone: DroneState }
+  | { type: 'tick'; timestampMs: number; assets: Asset[]; drone: DroneState }
   | { type: 'zones'; zones: ZonePolygon[] }
   | { type: 'patrol'; patrol: PatrolPath | null }
   | { type: 'event'; event: EventEntry };

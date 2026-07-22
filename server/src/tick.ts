@@ -8,24 +8,24 @@ import { recordFix, TICK_MS, type World } from './world.js';
  * event-loop delay under load cannot accumulate position error.
  */
 export function startTick(world: World, broadcast: (msg: WsMessage) => void): NodeJS.Timeout {
-  let last = Date.now();
+  let lastTickMs = Date.now();
 
   return setInterval(() => {
-    const now = Date.now();
-    const dtS = (now - last) / 1000;
-    last = now;
+    const nowMs = Date.now();
+    const deltaSeconds = (nowMs - lastTickMs) / 1000;
+    lastTickMs = nowMs;
 
     for (const asset of world.assets.values()) {
-      wander(asset, dtS);
-      asset.pos = destinationPoint(asset.pos, asset.headingDeg, asset.speedMps * dtS);
-      recordFix(world, asset.id, { pos: asset.pos, t: now });
+      wander(asset, deltaSeconds);
+      asset.pos = destinationPoint(asset.pos, asset.headingDeg, asset.speedMps * deltaSeconds);
+      recordFix(world, asset.id, { pos: asset.pos, timestampMs: nowMs });
     }
 
     // S6 advances the drone here; until then SEN-01 holds at spawn, idle.
 
     broadcast({
       type: 'tick',
-      t: now,
+      timestampMs: nowMs,
       assets: [...world.assets.values()],
       drone: world.drone,
     });

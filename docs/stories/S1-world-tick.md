@@ -153,7 +153,16 @@ description (standing convention).
 
 > Prefer to use const instead of redeclaring 360 value
 
+> Use a full name for this property to avoid ambiguity.
+
+> Export to a separate type similar to existing enums
+
+> variable clarity. Use more verbose naming here
+
 Disposition: FULL_CIRCLE_DEG exported from shared/geo.ts, used in
-normalizeBearing and the generator's heading spawn.
+normalizeBearing and the generator's heading spawn. Fix.t renamed timestampMs
+and applied consistently (EventEntry, the tick message). EventKind extracted as
+a named union beside ThreatLevel and DroneMode. Tick-loop locals renamed
+lastTickMs, nowMs, deltaSeconds.
 
 PR gate: pending operator merge of PR #15.
