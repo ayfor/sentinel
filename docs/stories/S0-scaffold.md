@@ -24,4 +24,6 @@
 **ACCEPTANCE**
 - `npm run dev` starts server + client concurrently; map renders dark and pans; `/health` responds; a type in `shared/types.ts` imports cleanly on both sides.
 
-**REVIEW** — _pending Josh's gate stamp_
+**REVIEW** 
+— Local functional test complete
+- README, automated workflow process and DECISIONS reviewed 
