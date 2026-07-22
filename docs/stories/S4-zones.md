@@ -62,12 +62,13 @@ sequenceDiagram
 
 ## Decisions
 
-- The drawn geoman layer is discarded and re-rendered from the broadcast: both
+Story-local decisions are numbered for citation from code (S4#dN).
+- d1: The drawn geoman layer is discarded and re-rendered from the broadcast: both
   tabs render zones from identical state, and the drawing tab cannot drift
   from the server.
-- Full zone list per broadcast (not deltas), matching the D8 wholesale
+- d2: Full zone list per broadcast (not deltas), matching the D8 wholesale
   philosophy at zone scale (a handful of polygons).
-- Designators are server-assigned so two tabs drawing concurrently cannot
+- d3: Designators are server-assigned so two tabs drawing concurrently cannot
   mint RZ-01 twice.
 
 ## Acceptance
