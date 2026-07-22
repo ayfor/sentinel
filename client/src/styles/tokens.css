@@ -1,0 +1,74 @@
+/* SENTINEL design tokens — ruled Jul 20–21.
+   The world is drafted (flat, sharp, grain); the controls are machined (glass).
+   Full rationale: docs/DESIGN.md */
+
+:root {
+  /* ground */
+  --ground: #0c0c0d;        /* working console — deep neutral black, no blue cast */
+  --ground-idle: #0a0a0a;   /* true black — idle/empty registers only */
+  --panel: #161617;
+  --line: #232320;
+
+  /* ink */
+  --ink: #f2f0ec;           /* bright warm white — contrast comes from ink vs floor */
+  --dim: #908f89;           /* micro-labels, neutral-warm */
+  --faint: #3b3a36;
+
+  /* semantic — color IS meaning, nothing decorative */
+  --red: #e0362f;           /* threat + alert, exclusively */
+  --amber: #ef9f27;         /* warning tier (TTE closing) */
+  --cyan: #69e0db;          /* the Sentinel, mode flags, active state */
+
+  /* glass — interactables ONLY (Mox V2 grammar, SENTINEL hues) */
+  --glass-neutral-fill: rgba(242, 240, 236, 0.06);
+  --glass-neutral-line: rgba(242, 240, 236, 0.08);
+  --glass-active-fill: rgba(105, 224, 219, 0.15);
+  --glass-active-line: rgba(105, 224, 219, 0.4);
+  --glass-threat-fill: rgba(224, 54, 47, 0.15);
+  --glass-threat-line: rgba(224, 54, 47, 0.4);
+  --glass-blur: 12px;
+  --glass-sheen: linear-gradient(180deg, rgba(242, 240, 236, 0.05), transparent 60%);
+
+  --radius-control: 2px;    /* sharp edges — deliberate deviation from Mox r6/r12 */
+  --disabled: 0.4;
+
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* film grain over the whole console — the world's texture */
+#root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2000;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC45IiBudW1PY3RhdmVzPSIyIi8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDEgMCAwIDAgMCAxIDAgMCAwIDAgMSAwIDAgMCAwLjAzIDAiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgZmlsdGVyPSJ1cmwoI24pIi8+PC9zdmc+");
+}
+
+.microlabel {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+/* dark cartography — dim the carto tiles to whisper-grey */
+.leaflet-tile-pane { filter: brightness(0.75) contrast(1.05) saturate(0.4); }
+.leaflet-container { background: var(--ground); font-family: var(--font-mono); }
+.leaflet-control-attribution {
+  background: rgba(12, 12, 13, 0.8) !important;
+  color: var(--faint) !important;
+  font-size: 9px;
+}
+.leaflet-control-attribution a { color: var(--dim) !important; }
