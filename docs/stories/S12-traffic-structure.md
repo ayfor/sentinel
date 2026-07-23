@@ -68,3 +68,11 @@ both YOW arrival flows, scatter elsewhere); a zone drawn across the trunk
 produced 3 CRITICAL and 3 WARNING within one second — the reproducible
 breach-shadow demo S12#d1 promised. Movement and recycling centralized in
 the generator's advanceAssets; the tick loop stays the orchestrator.
+
+### Codex Review (PR #27) - Disposition
+
+Codex P2, confirmed real: the transatlantic entry sat 0.15 degrees below the
+sector ceiling with a north-drifting bearing, so the stream tail spawned
+outside and recycled on the first tick. Entry moved south, bearing flattened
+to drift slightly south, and a 20-run property test now asserts every spawn
+lands inside the sector.

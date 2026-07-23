@@ -35,7 +35,10 @@ export const CORRIDORS: Corridor[] = [
   { name: 'YYZ-YUL trunk', entry: { lat: 44.35, lng: -78.4 }, bearingDeg: 65, baseSpeedMps: 230, altitudeM: [9000, 11500] },
   { name: 'YOW arrivals east', entry: { lat: 45.65, lng: -73.1 }, bearingDeg: 252, baseSpeedMps: 180, altitudeM: [6000, 8500] },
   { name: 'YOW arrivals west', entry: { lat: 44.95, lng: -78.4 }, bearingDeg: 74, baseSpeedMps: 190, altitudeM: [6500, 9000] },
-  { name: 'transatlantic band', entry: { lat: 46.45, lng: -73.05 }, bearingDeg: 276, baseSpeedMps: 250, altitudeM: [10500, 12000] },
+  // Entry sits clear of latMax and the bearing drifts slightly south: at
+  // 276 degrees the stream's tail spawned above the sector and recycled
+  // immediately (Codex P2 on PR #27).
+  { name: 'transatlantic band', entry: { lat: 46.35, lng: -73.05 }, bearingDeg: 268, baseSpeedMps: 250, altitudeM: [10500, 12000] },
 ];
 
 /** Lateral jitter around the corridor centerline (about 3 km). */

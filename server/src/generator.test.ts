@@ -11,6 +11,21 @@ describe('corridor traffic (S12)', () => {
     expect(onCorridors).toBe(72);
   });
 
+  it('every corridor member spawns inside the sector (no spawn-time recycling)', () => {
+    // Guards the Codex P2 on PR #27: a corridor whose tail spawns past the
+    // sector edge churns ids on the first tick.
+    for (let run = 0; run < 20; run++) {
+      const world = createWorld();
+      spawnAssets(world);
+      for (const a of world.assets.values()) {
+        expect(a.pos.lat).toBeGreaterThanOrEqual(44.2);
+        expect(a.pos.lat).toBeLessThanOrEqual(46.6);
+        expect(a.pos.lng).toBeGreaterThanOrEqual(-78.5);
+        expect(a.pos.lng).toBeLessThanOrEqual(-73.0);
+      }
+    }
+  });
+
   it('corridor assets hold within 2 degrees of the corridor bearing', () => {
     const world = createWorld();
     spawnAssets(world);
