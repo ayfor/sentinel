@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import type { Fix } from '@shared/types';
-import { bearingDeg, destinationPoint, distanceMeters } from '@shared/geo';
+import { bearingDeg, destinationPoint, distanceMeters, normalizeBearing } from '@shared/geo';
 import { getTrack } from '../net/api';
 import { useUiStore } from '../state/uiStore';
 import { useWorldStore } from '../state/worldStore';
@@ -28,15 +28,25 @@ export function attachTrailLayer(map: L.Map): () => void {
           { color: '#f2f0ec', weight: 1, opacity, interactive: false },
         ).addTo(layer);
       }
-      // Averaged over the fetched window (S7#d3): bearing first-to-last fix,
-      // speed as path length over duration.
+      // Averaged over the fetched window (S7#d3): heading is the circular
+      // mean of per-segment bearings weighted by segment length (net
+      // first-to-last displacement is NOT the average heading on a curved
+      // track — Codex P2 on PR #23); speed is path length over duration.
       const first = fixes[0]!;
       const last = fixes[fixes.length - 1]!;
       const durationS = (last.timestampMs - first.timestampMs) / 1000;
       if (durationS > 0) {
         let pathM = 0;
-        for (let i = 1; i < fixes.length; i++) pathM += distanceMeters(fixes[i - 1]!.pos, fixes[i]!.pos);
-        const heading = bearingDeg(first.pos, last.pos);
+        let east = 0;
+        let north = 0;
+        for (let i = 1; i < fixes.length; i++) {
+          const d = distanceMeters(fixes[i - 1]!.pos, fixes[i]!.pos);
+          const b = (bearingDeg(fixes[i - 1]!.pos, fixes[i]!.pos) * Math.PI) / 180;
+          east += d * Math.sin(b);
+          north += d * Math.cos(b);
+          pathM += d;
+        }
+        const heading = normalizeBearing((Math.atan2(east, north) * 180) / Math.PI);
         const speed = pathM / durationS;
         const end = destinationPoint(last.pos, heading, speed * PREDICTION_S);
         L.polyline(
@@ -56,7 +66,9 @@ export function attachTrailLayer(map: L.Map): () => void {
       const fixes = await getTrack(id);
       if (useUiStore.getState().selectedAssetId === id) draw(fixes);
     } catch {
-      clear();
+      // Only clear for the still-selected id: a stale failed request must not
+      // erase the trail of a newer selection (Codex P2 on PR #23).
+      if (useUiStore.getState().selectedAssetId === id) clear();
     }
   };
 

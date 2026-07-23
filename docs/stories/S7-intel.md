@@ -150,3 +150,12 @@ tool's physical clicks carry a micro-drag Leaflet suppresses as a pan, which
 is the same conflict the operator observed in S2 functional testing —
 tolerance absorbs near-misses but cannot absorb drags; S7#d4's
 spacebar-pan fast-follow stays evidence-gated on human testing.
+
+### Codex Review (PR #23) - Disposition
+
+Two P2s, both confirmed real. First: the prediction bearing used net
+first-to-last displacement, which is not the average heading on a curved
+track; replaced with the circular mean of per-segment bearings weighted by
+segment length. Second: a stale failed track request cleared the current
+selection's trail; the failure path now carries the same selected-id guard
+as the success path.
