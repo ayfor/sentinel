@@ -161,3 +161,11 @@ merge (S8#d6). The kill/restore drill surfaced a dev-harness truth: Vite's
 ws proxy wedges permanently after a backend bounce, so dev sockets connect
 direct (S8#d5) while production keeps same-origin. Drill evidence: CLOSED
 within a second of kill, LIVE with full rehydration inside the backoff cap.
+
+## S9 - Threat Symbology (FR-7)
+
+Gate self-served. Threat-colored markers restyled in place on the layer
+diff (S9#d2), CRITICAL pulse ring on its own small rAF pending S3's return
+(S9#d3), legend chip relocated bottom-right around the S8 drawer (S9#d4),
+and the token audit: palette.ts mirrors the token sheet for canvas paint
+(S9#d5), five layers migrated, grep-clean outside tokens.css and palette.ts.

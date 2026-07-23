@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import { useWorldStore } from '../state/worldStore';
+import { CYAN } from './palette';
 
 /**
  * SEN-01: cyan hollow hexagon with center dot, rotated to heading, mode label
@@ -12,15 +13,15 @@ const droneIcon = (headingDeg: number, mode: string) =>
     html: `
       <svg width="26" height="26" viewBox="-13 -13 26 26" style="transform: rotate(${headingDeg}deg); display: block;">
         <polygon points="0,-10 8.7,-5 8.7,5 0,10 -8.7,5 -8.7,-5"
-          fill="none" stroke="#69e0db" stroke-width="1.5" />
-        <circle r="1.8" fill="#69e0db" />
+          fill="none" stroke="${CYAN}" stroke-width="1.5" />
+        <circle r="1.8" fill="${CYAN}" />
       </svg>
       <div class="drone-label">SEN-01 · ${mode.toUpperCase()}</div>`,
     iconSize: [26, 40],
     iconAnchor: [13, 13],
   });
 
-const TETHER_STYLE: L.PolylineOptions = { color: '#69e0db', weight: 1, opacity: 0.9 };
+const TETHER_STYLE: L.PolylineOptions = { color: CYAN, weight: 1, opacity: 0.9 };
 
 export function attachDroneLayer(map: L.Map): () => void {
   let marker: L.Marker | null = null;

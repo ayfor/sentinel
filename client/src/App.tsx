@@ -9,6 +9,8 @@ import { attachAssetInteraction } from './map/assetInteraction';
 import { attachTrailLayer } from './map/trailLayer';
 import { InspectorPanel } from './panels/InspectorPanel';
 import { EventDrawer } from './panels/EventDrawer';
+import { Legend } from './panels/Legend';
+import { attachPulseLayer } from './map/pulseLayer';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
 import { useUiStore } from './state/uiStore';
@@ -102,9 +104,11 @@ export default function App() {
     const zones = attachZoneLayer(mapRef.current);
     const patrol = attachPatrolLayer(mapRef.current);
     const disposeDrone = attachDroneLayer(mapRef.current);
+    const disposePulse = attachPulseLayer(mapRef.current);
     const disposeController = attachZonesController(mapRef.current, zones.resync, patrol.resync);
     return () => {
       disposeController();
+      disposePulse();
       disposeDrone();
       patrol.dispose();
       zones.dispose();
@@ -120,6 +124,7 @@ export default function App() {
       <NoticeChip />
       <InspectorPanel />
       <EventDrawer />
+      <Legend />
       <div id="map" style={{ height: '100%' }} />
     </div>
   );

@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import { useUiStore } from '../state/uiStore';
+import { INK } from './palette';
 
 /**
  * Hover and selection rings (S7, operator addition at the batch gate). Ink,
@@ -9,7 +10,7 @@ import { useUiStore } from '../state/uiStore';
 const ringStyle = (solid: boolean): L.CircleMarkerOptions => ({
   radius: 6.5,
   fill: false,
-  color: '#f2f0ec',
+  color: INK,
   weight: 1,
   opacity: solid ? 0.9 : 0.4,
   interactive: false,

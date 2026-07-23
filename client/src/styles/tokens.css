@@ -241,3 +241,36 @@ html, body, #root {
 .event-text { color: var(--dim); font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .event-empty { color: var(--faint); }
 .event-caret { color: var(--faint); font-size: 9px; margin-left: auto; padding-left: 8px; }
+
+/* legend (S9): glass chip, bottom-right above the zoom control (S9#d4) */
+.legend {
+  position: absolute;
+  bottom: 96px;
+  right: 14px;
+  z-index: 1000;
+  padding: 8px 10px;
+  background: var(--glass-neutral-fill);
+  border: 1px solid var(--glass-neutral-line);
+  border-radius: var(--radius-control);
+  backdrop-filter: blur(var(--glass-blur));
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.9;
+}
+
+.legend-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-hex { display: inline-block; }

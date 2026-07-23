@@ -4,6 +4,7 @@ import { bearingDeg, destinationPoint, distanceMeters, normalizeBearing } from '
 import { getTrack } from '../net/api';
 import { useUiStore } from '../state/uiStore';
 import { useWorldStore } from '../state/worldStore';
+import { INK } from './palette';
 
 /** Trail fade in about 10 bucketed segments (S7#d2), oldest faintest. */
 const TRAIL_BUCKETS = 10;
@@ -25,7 +26,7 @@ export function attachTrailLayer(map: L.Map): () => void {
         const opacity = 0.08 + 0.5 * ((b + 1) / TRAIL_BUCKETS);
         L.polyline(
           slice.map((f) => [f.pos.lat, f.pos.lng] as [number, number]),
-          { color: '#f2f0ec', weight: 1, opacity, interactive: false },
+          { color: INK, weight: 1, opacity, interactive: false },
         ).addTo(layer);
       }
       // Averaged over the fetched window (S7#d3): heading is the circular
@@ -51,7 +52,7 @@ export function attachTrailLayer(map: L.Map): () => void {
         const end = destinationPoint(last.pos, heading, speed * PREDICTION_S);
         L.polyline(
           [[last.pos.lat, last.pos.lng], [end.lat, end.lng]],
-          { color: '#f2f0ec', weight: 1, opacity: 0.55, dashArray: '2 6', interactive: false },
+          { color: INK, weight: 1, opacity: 0.55, dashArray: '2 6', interactive: false },
         ).addTo(layer);
       }
     }
