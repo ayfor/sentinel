@@ -21,16 +21,30 @@ const twiceSignedArea = (ring: LatLng[]) => {
   return sum;
 };
 
-/** Strict segment intersection test (shared endpoints excluded by the caller). */
+/**
+ * General segment intersection for NON-ADJACENT edges: proper crossings,
+ * endpoint-on-segment touches (T-junctions, pinched rings via a repeated
+ * non-adjacent vertex), and collinear overlaps all count — any contact
+ * between non-adjacent edges breaks ring simplicity (Codex P2 on PR #20;
+ * the earlier strict test returned false whenever an orientation was 0).
+ */
 const orient = (a: LatLng, b: LatLng, c: LatLng) =>
   Math.sign((b.lng - a.lng) * (c.lat - a.lat) - (b.lat - a.lat) * (c.lng - a.lng));
+
+const onSegment = (a: LatLng, b: LatLng, p: LatLng) =>
+  Math.min(a.lng, b.lng) <= p.lng && p.lng <= Math.max(a.lng, b.lng) &&
+  Math.min(a.lat, b.lat) <= p.lat && p.lat <= Math.max(a.lat, b.lat);
 
 const segmentsCross = (p1: LatLng, p2: LatLng, q1: LatLng, q2: LatLng) => {
   const o1 = orient(p1, p2, q1);
   const o2 = orient(p1, p2, q2);
   const o3 = orient(q1, q2, p1);
   const o4 = orient(q1, q2, p2);
-  return o1 !== o2 && o3 !== o4 && o1 !== 0 && o2 !== 0 && o3 !== 0 && o4 !== 0;
+  if (o1 !== o2 && o3 !== o4) return true;
+  if (o1 === 0 && onSegment(p1, p2, q1)) return true;
+  if (o2 === 0 && onSegment(p1, p2, q2)) return true;
+  if (o3 === 0 && onSegment(q1, q2, p1)) return true;
+  return o4 === 0 && onSegment(q1, q2, p2);
 };
 
 /**

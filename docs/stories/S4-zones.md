@@ -231,3 +231,13 @@ lists the zone layer and /api/zones; no delta.
 Geoman toolbar moved from bottom right to top right (offset below the status
 bar) and buttons enlarged to 44 px with 12 px padding, icons scaled to fit.
 Verified in the live preview alongside a rendered zone.
+
+### Codex Review (PR #20) - Disposition
+
+Codex P2: the strict crossing predicate returned false whenever an
+orientation test was zero, so endpoint-on-segment touches (T-junctions),
+repeated non-adjacent vertices (pinched rings), and collinear overlaps were
+accepted as simple. Confirmed real. Fixed with the general segment
+intersection test: for non-adjacent edges, any contact breaks simplicity.
+Verified via curl: T-junction, pinched ring, and collinear overlap all 400;
+valid rings and the figure-eight regression unchanged.
