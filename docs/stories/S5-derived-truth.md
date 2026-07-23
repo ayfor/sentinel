@@ -93,3 +93,11 @@ Root npm test wired through the server workspace (S0 Codex finding closed).
 Live: sector-wide zone produced 14 CRITICAL / 3 WARNING / 103 NORMAL over
 120 assets, TTE on 28, nearest-zone on all; sample WARNING asset cross-checked
 (69 s at ~215 m/s vs 14.9 km reported); tick gap 1002 ms.
+
+### Codex Review (PR #21) - Disposition
+
+Codex P2: zone mutations left derived state stale until the next 1 Hz tick,
+so deleting the last zone could show a false CRITICAL for up to a second.
+Confirmed real. Zone POST and DELETE now re-derive every asset and broadcast
+a fresh tick immediately; verified live (threat counts collapse to all-NORMAL
+in the same instant the zones message lands).
