@@ -67,3 +67,55 @@ export function destinationPoint(origin: LatLng, bearing: number, distanceM: num
     );
   return { lat: toDeg(phi2), lng: toDeg(lambda2) }; // step 5
 }
+
+const METERS_PER_DEG_LAT = 111320;
+
+/**
+ * Point-in-ring test, ray cast on raw coordinates (planar approximation is
+ * adequate at sector scale). Boundary-inclusive: a point on an edge or vertex
+ * counts as inside — conservative for restricted zones (S5#d4).
+ */
+export function pointInPolygon(p: LatLng, ring: LatLng[]): boolean {
+  const n = ring.length;
+  for (let i = 0; i < n; i++) {
+    const a = ring[i]!;
+    const b = ring[(i + 1) % n]!;
+    const cross = (b.lng - a.lng) * (p.lat - a.lat) - (b.lat - a.lat) * (p.lng - a.lng);
+    if (
+      cross === 0 &&
+      Math.min(a.lng, b.lng) <= p.lng && p.lng <= Math.max(a.lng, b.lng) &&
+      Math.min(a.lat, b.lat) <= p.lat && p.lat <= Math.max(a.lat, b.lat)
+    ) {
+      return true;
+    }
+  }
+  let inside = false;
+  for (let i = 0; i < n; i++) {
+    const a = ring[i]!;
+    const b = ring[(i + 1) % n]!;
+    const straddles = a.lat > p.lat !== b.lat > p.lat;
+    if (straddles && p.lng < a.lng + ((p.lat - a.lat) / (b.lat - a.lat)) * (b.lng - a.lng)) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+/**
+ * Distance from a point to a segment in meters, equirectangular projection
+ * centered on the point (planar approximation, adequate at sector scale).
+ */
+export function distanceToSegmentMeters(p: LatLng, a: LatLng, b: LatLng): number {
+  const scale = Math.cos(toRad(p.lat));
+  const ax = (a.lng - p.lng) * scale * METERS_PER_DEG_LAT;
+  const ay = (a.lat - p.lat) * METERS_PER_DEG_LAT;
+  const bx = (b.lng - p.lng) * scale * METERS_PER_DEG_LAT;
+  const by = (b.lat - p.lat) * METERS_PER_DEG_LAT;
+  const dx = bx - ax;
+  const dy = by - ay;
+  const lengthSq = dx * dx + dy * dy;
+  const t = lengthSq === 0 ? 0 : Math.max(0, Math.min(1, -(ax * dx + ay * dy) / lengthSq));
+  const cx = ax + t * dx;
+  const cy = ay + t * dy;
+  return Math.sqrt(cx * cx + cy * cy);
+}

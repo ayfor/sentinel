@@ -118,3 +118,14 @@ degeneracy, recorded as S4#d5. Curl battery exercised every clause; a
 hand-drawn polygon in the live preview round-tripped through POST, broadcast,
 and re-render, and designators stayed monotonic across a delete. Component
 diagram re-verified, no delta.
+
+## S5 - Derived Truth (FR-2 second half, FR-7 source)
+
+Gate self-served under the wrap-up ruling (operator signed elsewhere Jul 22;
+project completes for portfolio, async PR comments still override). Built
+pointInPolygon (boundary-inclusive, S5#d4) and distanceToSegmentMeters in
+shared geo, pure derive module (sampled projection per S5#d1/d2, FR-7
+threshold), tick integration. Vitest lands: 14 hand-computed tests, root
+npm test wired (S0 Codex promise closed). Live verification with a
+sector-wide zone: threat tiers populate, WARNING sample cross-checks against
+speed and distance, 1 Hz cadence holds.

@@ -3,6 +3,7 @@ import websocket from '@fastify/websocket';
 import type { HealthResponse, LatLng } from '../../shared/types.js';
 import { createWorld, pushEvent } from './world.js';
 import { createZone, validateRing } from './zones.js';
+import { deriveAsset } from './derive.js';
 import { spawnAssets, ASSET_COUNT } from './generator.js';
 import { startTick } from './tick.js';
 import { Broadcaster } from './broadcast.js';
@@ -26,6 +27,21 @@ app.get('/ws', { websocket: true }, (socket) => {
   broadcaster.add(socket);
 });
 
+/**
+ * Zone mutations re-derive every asset and push a fresh tick immediately:
+ * without this, deleting the last zone leaves a false CRITICAL on screen for
+ * up to a second (Codex P2 on PR #21).
+ */
+const rederiveAndBroadcast = () => {
+  for (const asset of world.assets.values()) deriveAsset(asset, world.zones);
+  broadcaster.broadcast({
+    type: 'tick',
+    timestampMs: Date.now(),
+    assets: [...world.assets.values()],
+    drone: world.drone,
+  });
+};
+
 let eventCounter = 0;
 const emitEvent = (kind: 'ZONE' | 'BREACH' | 'SENTINEL' | 'FEED', text: string) => {
   const event = { id: `event-${++eventCounter}`, timestampMs: Date.now(), kind, text };
@@ -43,6 +59,7 @@ app.post('/api/zones', async (req, reply) => {
   world.zones.push(zone);
   broadcaster.broadcast({ type: 'zones', zones: world.zones });
   emitEvent('ZONE', `${zone.name} created by operator (${zone.ring.length} vertices)`);
+  rederiveAndBroadcast();
   return reply.code(201).send(zone);
 });
 
@@ -53,6 +70,7 @@ app.delete('/api/zones/:id', async (req, reply) => {
   const [removed] = world.zones.splice(index, 1);
   broadcaster.broadcast({ type: 'zones', zones: world.zones });
   emitEvent('ZONE', `${removed!.name} deleted by operator`);
+  rederiveAndBroadcast();
   return reply.code(204).send();
 });
 
