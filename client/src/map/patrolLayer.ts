@@ -1,9 +1,10 @@
 import L from 'leaflet';
 import { useWorldStore } from '../state/worldStore';
+import { CYAN } from './palette';
 
 /** Patrol path styling: dashed cyan, the Sentinel's color (T1 grammar). */
 const PATROL_STYLE: L.PolylineOptions = {
-  color: '#69e0db',
+  color: CYAN,
   weight: 1,
   dashArray: '4 6',
   opacity: 0.8,

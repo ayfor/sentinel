@@ -1,11 +1,18 @@
 import L from 'leaflet';
-import type { Asset } from '@shared/types';
+import type { Asset, ThreatLevel } from '@shared/types';
 import { useWorldStore } from '../state/worldStore';
+import { AMBER, INK, RED } from './palette';
 
-/** Nominal asset dot, from the token sheet (threat colors arrive in S9). */
+/** Threat symbology (S9, FR-7): color from the single computed source (S9#d2). */
+const THREAT_FILL: Record<ThreatLevel, string> = {
+  NORMAL: INK,
+  WARNING: AMBER,
+  CRITICAL: RED,
+};
+
 const MARKER_STYLE: L.CircleMarkerOptions = {
   radius: 2.5,
-  fillColor: '#f2f0ec',
+  fillColor: INK,
   fillOpacity: 0.92,
   stroke: false,
 };
@@ -34,8 +41,14 @@ export function attachAssetLayer(map: L.Map): AssetLayerHandle {
       const existing = markers.get(id);
       if (existing) {
         existing.setLatLng([asset.pos.lat, asset.pos.lng]);
+        if (existing.options.fillColor !== THREAT_FILL[asset.threat]) {
+          existing.setStyle({ fillColor: THREAT_FILL[asset.threat] });
+        }
       } else {
-        const marker = L.circleMarker([asset.pos.lat, asset.pos.lng], MARKER_STYLE);
+        const marker = L.circleMarker([asset.pos.lat, asset.pos.lng], {
+          ...MARKER_STYLE,
+          fillColor: THREAT_FILL[asset.threat],
+        });
         marker.addTo(layer);
         markers.set(id, marker);
       }

@@ -1,13 +1,14 @@
 import L from 'leaflet';
 import type { ZonePolygon } from '@shared/types';
 import { useWorldStore } from '../state/worldStore';
+import { RED } from './palette';
 
 /** Zone styling from the token sheet: red dashed boundary, 12 percent fill. */
 const ZONE_STYLE: L.PolylineOptions = {
-  color: '#e0362f',
+  color: RED,
   weight: 1,
   dashArray: '6 4',
-  fillColor: '#e0362f',
+  fillColor: RED,
   fillOpacity: 0.12,
 };
 

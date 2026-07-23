@@ -32,6 +32,13 @@ Story-local decisions are numbered for citation from code (S9#dN).
   have no DOM to animate, and one loop owning all motion is the S3 contract.
 - d2: Symbology lives entirely in the layer's style function: S5 owns what threat
   is, S9 owns only what it looks like.
+- d3 (build): with S3 deferred (D12) there is no shared motion loop yet; the
+  pulse runs its own small rAF, which S3 absorbs when motion returns.
+- d4 (build): the legend lives bottom-right above the zoom control — the
+  mockup put it bottom-left, but the event drawer (S8) claimed that corner.
+- d5 (build): canvas layers cannot read CSS variables, so palette.ts mirrors
+  the token sheet one-to-one for canvas paint; the token audit greps for hex
+  outside tokens.css and palette.ts.
 
 ## Acceptance
 
@@ -42,4 +49,16 @@ Story-local decisions are numbered for citation from code (S9#dN).
 
 ## Review
 
-Pending design gate.
+### Gate Note
+
+Self-served under the wrap-up ruling (see S5 doc); async PR comments still
+override.
+
+### Build Verification
+
+Live frame with a zone in traffic: red CRITICAL marker with animated pulse
+ring inside the zone, amber WARNING marker on approach, ink nominals, SEN-01
+shadowing with tether, legend chip bottom-right, ticker narrating. Token
+audit grep-clean: no hex color outside tokens.css and palette.ts (all five
+canvas layers migrated to palette imports). Panel threat colors and map
+symbology share the single computed source (S9#d2, D3).
