@@ -184,3 +184,21 @@ Codex P2, confirmed real: reconnect snapshots rehydrated the world but the
 motion buffers kept pre-disconnect samples, so the first frames after
 recovery overwrote fresh positions with stale ones. The store now bumps a
 snapshot counter and motion clears its buffers and clock estimate on it.
+
+### Round 7 - Operator Functional Feedback (Verbatim)
+
+> IM seeing a good amount of jitter on the assets currently
+
+### Disposition (Round 7)
+
+The eyeball gate the doc kept open caught what the instruments missed, for
+the second time. Root cause: the asset layer's tick sync still called
+setLatLng — the double-writer the original design said motion would take
+over. Every second each marker snapped one full tick ahead of render time
+and the next frame pulled it back; a 100 ms displacement probe reads that
+excursion as normal net movement, which is why Round 6's evidence was
+clean. Fixed: the layer sync owns existence and style only, and motion
+additionally skips same-position samples so zone-mutation synthesized ticks
+cannot create zero-velocity segments. Verified at frame resolution this
+time (the instrument that catches it): 360 rAF samples, mean step 2.8 m,
+max 3.0 m, zero spikes over three times the mean, zero backward jumps.

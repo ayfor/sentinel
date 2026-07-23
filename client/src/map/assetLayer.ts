@@ -40,7 +40,10 @@ export function attachAssetLayer(map: L.Map): AssetLayerHandle {
     for (const [id, asset] of assets) {
       const existing = markers.get(id);
       if (existing) {
-        existing.setLatLng([asset.pos.lat, asset.pos.lng]);
+        // Position belongs to the motion loop (S3): a per-tick setLatLng here
+        // snapped markers a full tick ahead of render time, then the next
+        // frame pulled them back — the per-second flash the operator saw.
+        // This sync owns existence and style only.
         if (existing.options.fillColor !== THREAT_FILL[asset.threat]) {
           existing.setStyle({ fillColor: THREAT_FILL[asset.threat] });
         }

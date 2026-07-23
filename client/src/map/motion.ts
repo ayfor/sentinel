@@ -73,6 +73,11 @@ export function attachMotion(
   const push = (buffer: Sample[], sample: Sample) => {
     const last = buffer[buffer.length - 1];
     if (last && distanceMeters(last.pos, sample.pos) > TELEPORT_M) buffer.length = 0;
+    // Zone mutations synthesize ticks without moving anyone (server design):
+    // a same-position sample with a later timestamp would read as a
+    // zero-velocity segment followed by double-speed catch-up. Skip it; a
+    // genuinely holding entity clamps at its newest fix either way.
+    if (last && last.pos.lat === sample.pos.lat && last.pos.lng === sample.pos.lng) return;
     buffer.push(sample);
     if (buffer.length > BUFFER_CAP) buffer.shift();
   };
