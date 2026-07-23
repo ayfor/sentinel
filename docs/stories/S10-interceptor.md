@@ -106,3 +106,12 @@ target lines under motion interpolation, the panel showed ORIGIN CYRP /
 TARGET ROU-549 / TGT SPD / SPD 450 / INTERCEPT counting 52 to 49 s live,
 and the ticker narrated dispatch and stand-down. TRACKS held at 120
 throughout (S10#d3: interceptors never enter the traffic display).
+
+### Codex Review (PR #29) - Disposition
+
+Codex P2, confirmed real: the zone-mutation synthesized tick recomputed
+breach truth but carried stale interceptor state, so a fresh zone could show
+CRITICAL assets with no responder (and a deleted zone could show orphaned
+interceptors) for up to a second. rederiveAndBroadcast now runs a zero-dt
+interceptor step — dispatch and stand-down happen, nobody moves — before
+broadcasting, keeping the synthesized tick internally consistent.

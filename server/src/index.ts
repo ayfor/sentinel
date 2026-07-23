@@ -4,6 +4,7 @@ import type { EventKind, HealthResponse, LatLng } from '../../shared/types.js';
 import { createWorld, pushEvent } from './world.js';
 import { createZone, validatePath, validateRing } from './zones.js';
 import { deriveAsset } from './derive.js';
+import { stepInterceptors } from './interceptor.js';
 import { spawnAssets, ASSET_COUNT } from './generator.js';
 import { startTick } from './tick.js';
 import { Broadcaster } from './broadcast.js';
@@ -42,6 +43,10 @@ app.get('/ws', { websocket: true }, (socket) => {
  */
 const rederiveAndBroadcast = () => {
   for (const asset of world.assets.values()) deriveAsset(asset, world.zones);
+  // Interceptor truth must move with breach truth (Codex P2 on PR #29): a
+  // zero-dt step dispatches and stands down without moving anyone, so the
+  // synthesized tick is internally consistent.
+  stepInterceptors(world, 0, emitEvent);
   broadcaster.broadcast({
     type: 'tick',
     timestampMs: Date.now(),
