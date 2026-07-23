@@ -129,3 +129,13 @@ threshold), tick integration. Vitest lands: 14 hand-computed tests, root
 npm test wired (S0 Codex promise closed). Live verification with a
 sector-wide zone: threat tiers populate, WARNING sample cross-checks against
 speed and distance, 1 Hz cadence holds.
+
+## S6 - Drone (FR-3)
+
+Gate self-served. Pure FSM step function (S6#d3) with the mode priority
+shadow over patrol over idle; waypoint cursor kept server-internal off the
+wire; hysteresis per the FR-3 ruling. Patrol REST (PUT replace, DELETE
+clear) with the S6 path validation split from ring validation. Client:
+patrol layer (render-from-store), drone layer (hexagon divIcon rotated to
+heading, mode label, shadow tether), draw controller discriminates polyline
+from polygon. 8 FSM tests; full cycle verified live including event stream.

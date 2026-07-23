@@ -3,6 +3,8 @@ import { useLeafletMap } from './map/useLeafletMap';
 import { attachAssetLayer } from './map/assetLayer';
 import { attachZoneLayer } from './map/zoneLayer';
 import { attachZonesController } from './map/zonesController';
+import { attachPatrolLayer } from './map/patrolLayer';
+import { attachDroneLayer } from './map/droneLayer';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
 import { useUiStore } from './state/uiStore';
@@ -85,9 +87,13 @@ export default function App() {
     if (!mapRef.current) return;
     const disposeAssets = attachAssetLayer(mapRef.current);
     const zones = attachZoneLayer(mapRef.current);
-    const disposeController = attachZonesController(mapRef.current, zones.resync);
+    const patrol = attachPatrolLayer(mapRef.current);
+    const disposeDrone = attachDroneLayer(mapRef.current);
+    const disposeController = attachZonesController(mapRef.current, zones.resync, patrol.resync);
     return () => {
       disposeController();
+      disposeDrone();
+      patrol.dispose();
       zones.dispose();
       disposeAssets();
     };

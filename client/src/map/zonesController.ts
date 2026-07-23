@@ -2,7 +2,7 @@ import L from 'leaflet';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import type { LatLng } from '@shared/types';
-import { postZone, deleteZone } from '../net/api';
+import { postZone, deleteZone, putPatrol, deletePatrol } from '../net/api';
 import { useUiStore } from '../state/uiStore';
 
 /**
@@ -11,14 +11,18 @@ import { useUiStore } from '../state/uiStore';
  * server's six-clause validation remains authoritative, surfaced through the
  * client-local rejection notice (S4#d4).
  */
-export function attachZonesController(map: L.Map, resyncZones: () => void): () => void {
+export function attachZonesController(
+  map: L.Map,
+  resyncZones: () => void,
+  resyncPatrol: () => void,
+): () => void {
   map.pm.addControls({
     position: 'topright',
     drawPolygon: true,
+    drawPolyline: true,
     removalMode: true,
     drawMarker: false,
     drawCircleMarker: false,
-    drawPolyline: false,
     drawRectangle: false,
     drawCircle: false,
     drawText: false,
@@ -29,13 +33,26 @@ export function attachZonesController(map: L.Map, resyncZones: () => void): () =
   });
   map.pm.setGlobalOptions({ allowSelfIntersection: false });
 
-  const onCreate = async (e: { layer: L.Layer }) => {
+  const onCreate = async (e: { shape: string; layer: L.Layer }) => {
+    // Render-from-store (S4#d1): the sketch never survives; the shape comes
+    // back from the broadcast. Polygons are zones; polylines are the patrol.
+    if (e.shape === 'Line') {
+      const drawn = e.layer as L.Polyline;
+      const points = (drawn.getLatLngs() as L.LatLng[]).map(
+        (p): LatLng => ({ lat: p.lat, lng: p.lng }),
+      );
+      drawn.remove();
+      try {
+        await putPatrol(points);
+      } catch (err) {
+        useUiStore.getState().showNotice(`patrol rejected: ${(err as Error).message}`);
+      }
+      return;
+    }
     const drawn = e.layer as L.Polygon;
     const latlngs = (drawn.getLatLngs()[0] as L.LatLng[]).map(
       (p): LatLng => ({ lat: p.lat, lng: p.lng }),
     );
-    // Render-from-store (S4#d1): the sketch never survives; the zone comes
-    // back from the broadcast.
     drawn.remove();
     try {
       await postZone(latlngs);
@@ -45,8 +62,17 @@ export function attachZonesController(map: L.Map, resyncZones: () => void): () =
   };
 
   const onRemove = async (e: { layer: L.Layer }) => {
+    if ((e.layer as unknown as { isPatrol?: boolean }).isPatrol) {
+      try {
+        await deletePatrol();
+      } catch (err) {
+        useUiStore.getState().showNotice(`patrol delete failed: ${(err as Error).message}`);
+        resyncPatrol();
+      }
+      return;
+    }
     const zoneId = (e.layer as unknown as { zoneId?: string }).zoneId;
-    if (!zoneId) return; // not a zone polygon (defensive)
+    if (!zoneId) return; // not a zone polygon or the patrol (defensive)
     try {
       await deleteZone(zoneId);
     } catch (err) {
