@@ -177,3 +177,10 @@ Occlusion hardening carried from attempt 1 (250 ms fallback under
 document.hidden). React untouched per frame. Final visual sign-off remains
 the operator's: attempt 1's instruments also read clean while the operator
 saw jumpiness, so the eyeball test is explicitly still open.
+
+### Codex Review (PR #28) - Disposition
+
+Codex P2, confirmed real: reconnect snapshots rehydrated the world but the
+motion buffers kept pre-disconnect samples, so the first frames after
+recovery overwrote fresh positions with stale ones. The store now bumps a
+snapshot counter and motion clears its buffers and clock estimate on it.

@@ -70,6 +70,14 @@ export function attachMotion(
   };
 
   const unsubscribe = useWorldStore.subscribe((state, prev) => {
+    // A snapshot (initial or reconnect) invalidates every buffered sample and
+    // the clock estimate: pre-disconnect fixes must not overwrite the
+    // rehydrated world (Codex P2, PR #28).
+    if (state.snapshotCount !== prev.snapshotCount) {
+      buffers.clear();
+      droneBuffer.length = 0;
+      clockOffset = null;
+    }
     if (state.lastTickMs === prev.lastTickMs) return;
     const arrival = state.lastTickMs - performance.now();
     clockOffset = clockOffset === null ? arrival : lerp(clockOffset, arrival, OFFSET_ALPHA);
