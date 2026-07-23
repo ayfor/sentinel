@@ -8,15 +8,17 @@ const PULSE_MAX_R = 16;
 const PULSE_PERIOD_MS = 1600;
 
 /**
- * The CRITICAL pulse ring (S9, FR-7) — glow exception 1 of 3 (T1). The design
- * assigned this animation to S3's motion loop (S9#d1); with S3 deferred by
- * D12 it runs its own small rAF, which S3 absorbs when motion returns
- * (S9#d3).
+ * The CRITICAL pulse ring (S9, FR-7) — glow exception 1 of 3 (T1). Runs as a
+ * frame callback inside the S3 motion loop (S9#d3 fulfilled): one rAF owns
+ * all motion. Rings follow the asset MARKERS (interpolated positions), not
+ * raw store fixes, so the pulse glides with its asset.
  */
-export function attachPulseLayer(map: L.Map): () => void {
+export function attachPulseLayer(
+  map: L.Map,
+  markers: Map<string, L.CircleMarker>,
+): { frame: (now: number) => void; dispose: () => void } {
   const layer = L.layerGroup().addTo(map);
   const rings = new Map<string, L.CircleMarker>();
-  let raf = 0;
 
   const frame = (now: number) => {
     const t = (now % PULSE_PERIOD_MS) / PULSE_PERIOD_MS;
@@ -24,9 +26,11 @@ export function attachPulseLayer(map: L.Map): () => void {
 
     for (const [id, asset] of assets) {
       if (asset.threat !== 'CRITICAL') continue;
+      const marker = markers.get(id);
+      if (!marker) continue;
       let ring = rings.get(id);
       if (!ring) {
-        ring = L.circleMarker([asset.pos.lat, asset.pos.lng], {
+        ring = L.circleMarker(marker.getLatLng(), {
           radius: PULSE_MIN_R,
           fill: false,
           color: RED,
@@ -35,7 +39,7 @@ export function attachPulseLayer(map: L.Map): () => void {
         }).addTo(layer);
         rings.set(id, ring);
       }
-      ring.setLatLng([asset.pos.lat, asset.pos.lng]);
+      ring.setLatLng(marker.getLatLng());
       ring.setRadius(PULSE_MIN_R + t * (PULSE_MAX_R - PULSE_MIN_R));
       ring.setStyle({ opacity: 0.7 * (1 - t) });
     }
@@ -46,13 +50,13 @@ export function attachPulseLayer(map: L.Map): () => void {
         rings.delete(id);
       }
     }
-    raf = requestAnimationFrame(frame);
   };
-  raf = requestAnimationFrame(frame);
 
-  return () => {
-    cancelAnimationFrame(raf);
-    layer.remove();
-    rings.clear();
+  return {
+    frame,
+    dispose: () => {
+      layer.remove();
+      rings.clear();
+    },
   };
 }

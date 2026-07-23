@@ -11,6 +11,7 @@ import { InspectorPanel } from './panels/InspectorPanel';
 import { EventDrawer } from './panels/EventDrawer';
 import { Legend } from './panels/Legend';
 import { attachPulseLayer } from './map/pulseLayer';
+import { attachMotion } from './map/motion';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
 import { useUiStore } from './state/uiStore';
@@ -94,7 +95,7 @@ export default function App() {
   useEffect(() => {
     if (!mapRef.current) return;
     const assets = attachAssetLayer(mapRef.current);
-    const disposeInteraction = attachAssetInteraction(mapRef.current, assets.markers, assets.layer);
+    const interaction = attachAssetInteraction(mapRef.current, assets.markers, assets.layer);
     // dev-only functional-testing hook (S2 convention)
     if (import.meta.env.DEV) {
       (window as unknown as { __sentinelMarkers: unknown }).__sentinelMarkers = assets.markers;
@@ -103,17 +104,23 @@ export default function App() {
     const disposeTrail = attachTrailLayer(mapRef.current);
     const zones = attachZoneLayer(mapRef.current);
     const patrol = attachPatrolLayer(mapRef.current);
-    const disposeDrone = attachDroneLayer(mapRef.current);
-    const disposePulse = attachPulseLayer(mapRef.current);
+    const drone = attachDroneLayer(mapRef.current);
+    const pulse = attachPulseLayer(mapRef.current, assets.markers);
+    const motion = attachMotion(assets.markers, drone);
+    const offPulse = motion.onFrame(pulse.frame);
+    const offRing = motion.onFrame(interaction.frame);
     const disposeController = attachZonesController(mapRef.current, zones.resync, patrol.resync);
     return () => {
       disposeController();
-      disposePulse();
-      disposeDrone();
+      offPulse();
+      offRing();
+      motion.dispose();
+      pulse.dispose();
+      drone.dispose();
       patrol.dispose();
       zones.dispose();
       disposeTrail();
-      disposeInteraction();
+      interaction.dispose();
       assets.dispose();
     };
   }, [mapRef]);
