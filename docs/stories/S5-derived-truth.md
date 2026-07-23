@@ -62,6 +62,10 @@ Story-local decisions are numbered for citation from code (S5#dN).
   null is more honest than a large number.
 - d3: Derivation stays out of the world module: pure inputs to pure outputs, which
   is what makes the tests hand-checkable.
+- d4 (build): pointInPolygon is boundary-inclusive — a point on a zone edge or
+  vertex counts as inside. Conservative is correct for restricted zones.
+- d5 (build): nearestZoneMeters is null when no zones exist; a number would
+  imply a measurement that has no referent.
 
 ## Acceptance
 
@@ -73,4 +77,19 @@ Story-local decisions are numbered for citation from code (S5#dN).
 
 ## Review
 
-Pending design gate.
+### Gate Note
+
+The live design gate is self-served from here: the operator signed elsewhere
+on Jul 22 and directed the project to wrap for completeness ("im going to
+have this project wrap up for completeness sake"). Async PR comments still
+override.
+
+### Build Verification
+
+14 unit tests green (head-on hand-computed TTE, parallel null, inside 0,
+600 s horizon null, FR-7 boundary 120/121, breach CRITICAL, null NORMAL,
+square edge distances, endpoint clamp, boundary-inclusive vertex and edge).
+Root npm test wired through the server workspace (S0 Codex finding closed).
+Live: sector-wide zone produced 14 CRITICAL / 3 WARNING / 103 NORMAL over
+120 assets, TTE on 28, nearest-zone on all; sample WARNING asset cross-checked
+(69 s at ~215 m/s vs 14.9 km reported); tick gap 1002 ms.

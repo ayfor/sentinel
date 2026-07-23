@@ -2,6 +2,7 @@ import type { WsMessage } from '../../shared/types.js';
 import { destinationPoint } from '../../shared/geo.js';
 import { wander } from './generator.js';
 import { recordFix, TICK_MS, type World } from './world.js';
+import { deriveAsset } from './derive.js';
 
 /**
  * The 1 Hz simulation loop. dt is measured, not assumed (design ruling), so
@@ -19,6 +20,7 @@ export function startTick(world: World, broadcast: (msg: WsMessage) => void): No
       wander(asset, deltaSeconds);
       asset.pos = destinationPoint(asset.pos, asset.headingDeg, asset.speedMps * deltaSeconds);
       recordFix(world, asset.id, { pos: asset.pos, timestampMs: nowMs });
+      deriveAsset(asset, world.zones);
     }
 
     // S6 advances the drone here; until then SEN-01 holds at spawn, idle.
