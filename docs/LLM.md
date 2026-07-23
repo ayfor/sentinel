@@ -5,6 +5,17 @@ given, and workflow & prompting. The full description of the pipeline lives in t
 [README](../README.md#process); the live per-gate log is
 [`docs/llm/WORKLOG.md`](llm/WORKLOG.md).
 
+## Two phases
+
+Through S4 every gate was ruled live by the operator. On Jul 22 the operator
+accepted a role elsewhere, withdrew from the process this assessment belonged
+to, and directed the project to completion for its own sake. From S5 on the
+design gates were self-served by the model under that standing ruling, each one
+recorded as a Gate Note in its story doc; the operator's asynchronous PR
+comments retained override authority, and the automated PR reviewer (Codex)
+stayed in the loop for every merge. Six of its findings were confirmed real
+and fixed with dispositions recorded in the story docs.
+
 ## Model
 
 Claude Fable 5 (Anthropic), operated through Claude Code (agentic CLI) in a
@@ -15,7 +26,7 @@ persistent session with repository, browser-preview, and design-tool access.
 | Responsibility | Human (Josh Stubbington) | LLM |
 |---|---|---|
 | Requirements (FR-1..7, edge-case rulings) | Ruled every item; reordered FR-2/3 for dependency order | Drafted conversions from the brief |
-| Architecture (D1–D6) | Ruled all six; supplied rationale on the record | Proposed options with tradeoffs |
+| Architecture (D1–D12) | Ruled all twelve; supplied rationale on the record | Proposed options with tradeoffs |
 | Design system | Curated the reference board; ruled palette, layout, six taste tensions, glass amendment | Ran the extraction pipeline; proposed tokens and mockup options |
 | Story designs (`docs/stories/`) | Gate-reviewed each; REVIEW stamps record corrections | Drafted docs from ruled material |
 | Code | Reviewed every diff at story gates; line-level review on TTE math and drone FSM | Generated implementation between gates |

@@ -3,18 +3,24 @@
 Map-based real-time data visualization. Dominion Dynamics technical assessment, Problem 1.
 
 A live airspace console over the Ottawa sector which includes the following:
-- 100+ simulated assets
-- User-drawn restricted zones with per-asset time-to-entry
+- 120 simulated assets flying structured civil corridors
+- User-drawn restricted zones with per-asset time-to-entry and threat tiers
 - An autonomous patrol drone that shadows zone breachers
+- Interceptor dispatch from real airports with live intercept estimates
+- Display-rate motion interpolation over a 1 Hz authoritative feed
 - Multi-client sync over a server-authoritative WebSocket
 
-Status: build in progress. Story tracker: [issues](https://github.com/ayfor/sentinel/issues).
+Status: complete. All stories merged; story trail: [issues](https://github.com/ayfor/sentinel/issues).
 
 ## Quickstart
 
 ```bash
 npm install
 npm run dev        # server :3001, client :5173
+```
+
+```bash
+npm test           # server unit suite (38 tests)
 ```
 
 Open http://localhost:5173. Open a second tab to see sync.
@@ -29,7 +35,7 @@ flowchart TB
     subgraph SPEC["SPECIFICATION (human-ruled at each gate)"]
         direction LR
         A["Assessment brief"] --> B["REQUIREMENTS.md<br/>FR-1..7 including rulings"]
-        B --> C["Architecture<br/>DECISIONS.md, D1-D9"]
+        B --> C["Architecture<br/>DECISIONS.md, D1-D12"]
         C --> D["Stories S0-S11<br/>one issue each, epic #1"]
     end
 
@@ -105,8 +111,8 @@ flowchart LR
         WS_HOOK["useWebSocket"]
         STORE["World store<br/>(Zustand)"]
         MOTION["Motion interpolator<br/>(rAF, one tick behind)"]
-        LAYERS["Map layers<br/>assets, zones, drone, trails"]
-        PANELS["Slide-out panels<br/>inspector, event log"]
+        LAYERS["Map layers<br/>assets, zones, drone, interceptors,<br/>trails, pulse"]
+        PANELS["Slide-out panels<br/>inspector, interceptor, event log,<br/>legend"]
         WS_HOOK --> STORE
         STORE --> LAYERS
         STORE --> PANELS
@@ -115,9 +121,9 @@ flowchart LR
 
     subgraph SERVER["server/ (Fastify + ws)"]
         direction TB
-        REST["REST routes<br/>/api/zones, /api/patrol"]
-        SIM["Sim core, 1Hz tick<br/>generator, drone FSM,<br/>derived truth (TTE, threat)"]
-        WORLD["World state<br/>assets + ring buffers,<br/>zones, patrol, events"]
+        REST["REST routes<br/>/api/zones, /api/patrol,<br/>/api/assets/:id/track"]
+        SIM["Sim core, 1Hz tick<br/>corridor generator, drone FSM,<br/>derived truth (TTE, threat),<br/>interceptor dispatch (airports)"]
+        WORLD["World state<br/>assets + ring buffers,<br/>zones, patrol, interceptors, events"]
         CAST["WS broadcaster<br/>snapshot + per-tick state"]
         REST --> WORLD
         SIM --> WORLD
