@@ -20,7 +20,7 @@ npm run dev        # server :3001, client :5173
 ```
 
 ```bash
-npm test           # server unit suite (38 tests)
+npm test           # server unit suite (32 tests)
 ```
 
 Open http://localhost:5173. Open a second tab to see sync.

@@ -96,7 +96,7 @@ override.
 
 ### Build Verification
 
-38 tests green, six new for the interceptor lifecycle: nearest-airport
+32 tests green, six new for the interceptor lifecycle: nearest-airport
 selection, single dispatch per breacher with the event text, closing
 estimate decreasing tick over tick, null on opening geometry (S10#d2),
 stand-down on target exit with the event, stand-down on target despawn.
