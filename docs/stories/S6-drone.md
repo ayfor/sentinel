@@ -71,4 +71,19 @@ Story-local decisions are numbered for citation from code (S6#dN).
 
 ## Review
 
-Pending design gate.
+### Gate Note
+
+Self-served under the wrap-up ruling (see S5 doc); async PR comments still
+override.
+
+### Build Verification
+
+8 FSM unit tests green (idle-to-patrol with event, waypoint advance at 500 m,
+patrol-to-shadow naming the target, hysteresis hold inside 20 percent,
+retarget beyond it, shadow-to-patrol at nearest waypoint, shadow-to-idle,
+pursuit closes distance). Live on the wire: patrol commenced at 90 m/s on a
+3-waypoint path, breach flipped shadow at 140 m/s naming UAL-427, zone
+deletion produced "all targets clear, resuming patrol" and 90 m/s. Visual:
+hexagon with T1 glow, mode label, dashed cyan path, tether in shadow.
+Patrol drawing rides the existing draw controller: geoman polylines are the
+patrol, polygons are zones, one pm:create handler discriminates on shape.

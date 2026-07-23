@@ -22,3 +22,22 @@ export async function deleteZone(id: string): Promise<void> {
     throw new Error(body?.reason ?? `delete failed (${res.status})`);
   }
 }
+
+export async function putPatrol(points: LatLng[]): Promise<void> {
+  const res = await fetch('/api/patrol', {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ points }),
+  });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => null)) as { reason?: string } | null;
+    throw new Error(body?.reason ?? `patrol rejected (${res.status})`);
+  }
+}
+
+export async function deletePatrol(): Promise<void> {
+  const res = await fetch('/api/patrol', { method: 'DELETE' });
+  if (!res.ok && res.status !== 404) {
+    throw new Error(`patrol delete failed (${res.status})`);
+  }
+}

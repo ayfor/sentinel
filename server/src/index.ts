@@ -1,8 +1,8 @@
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
-import type { HealthResponse, LatLng } from '../../shared/types.js';
+import type { EventKind, HealthResponse, LatLng } from '../../shared/types.js';
 import { createWorld, pushEvent } from './world.js';
-import { createZone, validateRing } from './zones.js';
+import { createZone, validatePath, validateRing } from './zones.js';
 import { deriveAsset } from './derive.js';
 import { spawnAssets, ASSET_COUNT } from './generator.js';
 import { startTick } from './tick.js';
@@ -13,7 +13,15 @@ const PORT = 3001;
 const world = createWorld();
 spawnAssets(world);
 const broadcaster = new Broadcaster(world);
-startTick(world, (msg) => broadcaster.broadcast(msg));
+
+let eventCounter = 0;
+const emitEvent = (kind: EventKind, text: string) => {
+  const event = { id: `event-${++eventCounter}`, timestampMs: Date.now(), kind, text };
+  pushEvent(world, event);
+  broadcaster.broadcast({ type: 'event', event });
+};
+
+startTick(world, (msg) => broadcaster.broadcast(msg), emitEvent);
 
 const app = Fastify({ logger: { level: 'warn' } });
 
@@ -42,13 +50,6 @@ const rederiveAndBroadcast = () => {
   });
 };
 
-let eventCounter = 0;
-const emitEvent = (kind: 'ZONE' | 'BREACH' | 'SENTINEL' | 'FEED', text: string) => {
-  const event = { id: `event-${++eventCounter}`, timestampMs: Date.now(), kind, text };
-  pushEvent(world, event);
-  broadcaster.broadcast({ type: 'event', event });
-};
-
 app.post('/api/zones', async (req, reply) => {
   const body = req.body as { ring?: LatLng[] } | null;
   const result = validateRing(body?.ring);
@@ -71,6 +72,27 @@ app.delete('/api/zones/:id', async (req, reply) => {
   broadcaster.broadcast({ type: 'zones', zones: world.zones });
   emitEvent('ZONE', `${removed!.name} deleted by operator`);
   rederiveAndBroadcast();
+  return reply.code(204).send();
+});
+
+app.put('/api/patrol', async (req, reply) => {
+  const body = req.body as { points?: LatLng[] } | null;
+  const result = validatePath(body?.points);
+  if (!result.ok) {
+    return reply.code(400).send({ reason: result.reason });
+  }
+  world.patrol = { id: 'patrol-1', points: result.points };
+  world.patrolWaypointIndex = 0;
+  broadcaster.broadcast({ type: 'patrol', patrol: world.patrol });
+  emitEvent('SENTINEL', `patrol path set by operator (${result.points.length} waypoints)`);
+  return reply.code(200).send(world.patrol);
+});
+
+app.delete('/api/patrol', async (_req, reply) => {
+  if (!world.patrol) return reply.code(404).send({ reason: 'no patrol path' });
+  world.patrol = null;
+  broadcaster.broadcast({ type: 'patrol', patrol: null });
+  emitEvent('SENTINEL', 'patrol path cleared by operator');
   return reply.code(204).send();
 });
 

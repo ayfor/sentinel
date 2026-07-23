@@ -106,3 +106,18 @@ html, body, #root {
   background-repeat: no-repeat;
   background-position: center;
 }
+
+/* SEN-01 (S6): licensed T1 glow exception on the hexagon */
+.drone-icon svg {
+  filter: drop-shadow(0 0 4px rgba(105, 224, 219, 0.6));
+}
+
+.drone-label {
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 1px;
+}

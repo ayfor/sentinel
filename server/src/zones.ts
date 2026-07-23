@@ -116,3 +116,25 @@ export function createZone(ring: LatLng[], creationNumber: number): ZonePolygon 
     ring,
   };
 }
+
+/**
+ * Patrol path validation (S6): an open polyline needs only arity, the vertex
+ * cap, and the WGS84 domain — no closure, area, or simplicity clauses.
+ */
+export function validatePath(input: unknown): { ok: true; points: LatLng[] } | { ok: false; reason: string } {
+  if (!Array.isArray(input)) return { ok: false, reason: 'points must be an array' };
+  const points = input as LatLng[];
+  if (
+    !points.every(
+      (p) => typeof p === 'object' && p !== null && typeof p.lat === 'number' && typeof p.lng === 'number',
+    )
+  ) {
+    return { ok: false, reason: 'every point needs numeric lat and lng' };
+  }
+  if (points.length < 2) return { ok: false, reason: 'a patrol path needs at least 2 points' };
+  if (points.length > MAX_VERTICES) return { ok: false, reason: `at most ${MAX_VERTICES} vertices` };
+  if (!points.every(isFiniteCoord)) {
+    return { ok: false, reason: 'coordinates must be finite, lat in [-90,90], lng in [-180,180]' };
+  }
+  return { ok: true, points };
+}

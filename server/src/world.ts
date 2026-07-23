@@ -28,6 +28,8 @@ export interface World {
   /** Monotonic designator counter; never reused after deletion (S4#d3). */
   zoneCounter: number;
   patrol: PatrolPath | null;
+  /** Patrol waypoint cursor, server-internal (never on the wire). */
+  patrolWaypointIndex: number;
   drone: DroneState;
   events: EventEntry[];
 }
@@ -42,6 +44,7 @@ export function createWorld(): World {
     zones: [],
     zoneCounter: 0,
     patrol: null,
+    patrolWaypointIndex: 0,
     drone: {
       id: 'drone-sen-01',
       callsign: 'SEN-01',
