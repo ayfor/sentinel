@@ -17,6 +17,9 @@ export function useLeafletMap(containerId: string) {
   useEffect(() => {
     const map = L.map(containerId, {
       preferCanvas: true,
+      // 8 px click-slop on every canvas layer: absorbs the micro-drag pans
+      // observed on tiny targets during S2 functional testing (S7#d4).
+      renderer: L.canvas({ tolerance: 8 }),
       zoomControl: false,
       attributionControl: true,
     }).setView(CENTER, ZOOM);

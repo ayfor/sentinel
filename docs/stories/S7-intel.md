@@ -78,6 +78,15 @@ Story-local decisions are numbered for citation from code (S7#dN).
   visually identical, an order of magnitude fewer layers.
 - d3: The prediction uses the same averaging window the buffer holds; less than 5
   minutes of life means averaging what exists (matches FR-4 ruling).
+- d5 (build): the asset layer is a FeatureGroup, not a LayerGroup — only
+  FeatureGroup re-emits child marker events, which is what the interaction
+  module subscribes to. Found when clicks fired on markers but never reached
+  the group handler.
+- d6 (build): suppressing the map's clear-selection click requires
+  L.DomEvent.stopPropagation(leafletEvent), not stop(originalEvent): Leaflet's
+  Map._fireDOMEvent checks an internal _stopped flag that only the
+  Leaflet-event path sets. Found when selection was set and cleared in the
+  same click.
 - d4: Map panning keeps the drag-to-pan convention (operator ruling). A
   spacebar-modified pan was considered to eliminate the pan-vs-click conflict
   outright, but drag-to-pan is the universal convention of map interfaces and
@@ -118,3 +127,26 @@ invisible hit circles — less geometry, and it absorbs the micro-drag pans
 observed on tiny targets. S2 itself ships no interaction by design.
 
 Pending batch design gate.
+
+### Gate Note
+
+Self-served under the wrap-up ruling (see S5 doc); async PR comments still
+override.
+
+### Build Verification
+
+Track endpoint returns chronological fixes (61 after a minute of life) and
+404 on unknown ids. Selection verified through the real canvas hit-test path
+(synthesized DOM click on the renderer canvas): select, panel slide-in with
+live 1 Hz values, empty-map click deselects. Renderer tolerance 8 px active
+(hit region radius + tolerance). Trail renders bucketed fade plus dotted
+5 min prediction; a zone across the sector filled TTE/ZONE/THREAT in the
+panel with colors matching map symbology source. Two real defects found and
+fixed during verification, recorded as S7#d5 and S7#d6. TRACK LOST could not
+be exercised live: the generator never despawns assets, so no natural
+trigger exists; the freeze-banner-clear logic ships with the panel and its
+trigger arrives with any future despawn source. Automation note: the browser
+tool's physical clicks carry a micro-drag Leaflet suppresses as a pan, which
+is the same conflict the operator observed in S2 functional testing —
+tolerance absorbs near-misses but cannot absorb drags; S7#d4's
+spacebar-pan fast-follow stays evidence-gated on human testing.

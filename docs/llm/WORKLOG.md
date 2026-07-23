@@ -139,3 +139,14 @@ clear) with the S6 path validation split from ring validation. Client:
 patrol layer (render-from-store), drone layer (hexagon divIcon rotated to
 heading, mode label, shadow tether), draw controller discriminates polyline
 from polygon. 8 FSM tests; full cycle verified live including event stream.
+
+## S7 - Intel (FR-4)
+
+Gate self-served. Track REST endpoint off the ring buffer; canvas renderer
+tolerance 8 px (S7#d4); hover and selection rings in ink; trail with
+bucketed fade plus dotted dead-reckoned prediction (S7#d2, S7#d3);
+right slide-out glass inspector at 1 Hz with TRACK LOST freeze. Two
+Leaflet findings the hard way: FeatureGroup vs LayerGroup event
+propagation (S7#d5) and the stopPropagation Leaflet-event idiom (S7#d6) —
+both caught by end-to-end verification through the real canvas hit-test
+path, not the happy-path programmatic one.
