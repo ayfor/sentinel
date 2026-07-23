@@ -202,3 +202,16 @@ events. Wire gains the Interceptor entity class, kept separate from traffic
 and the drone (S10#d3). Client chevrons ride the S3 motion loop as a third
 buffered group. FR-6 was the last unimplemented requirement: functional
 coverage is now complete.
+
+## S11 - Close-out (amended: no submission)
+
+Gate self-served; the video and submission steps were struck by the
+operator's Jul 22 decision to sign elsewhere and withdraw. What remained:
+DESIGN.md from the ruled artifacts, the README component diagram's final
+sweep (S3/S10/S12 deltas), the LLM disclosure's two-phase gate history, and
+the clean-checkout bar: fresh clone, npm install, 32 tests green, two-command
+boot, live snapshot with 120 assets. One correction to my own record: the
+S10 evidence claimed 38 tests where the truth was 32; fixed at the source
+and acknowledged where it was stated. The repository stands as the
+deliverable: twelve stories merged, every gate stamped, every Codex finding
+dispositioned, and the trail auditable end to end.
