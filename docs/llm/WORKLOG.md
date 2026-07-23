@@ -215,3 +215,14 @@ S10 evidence claimed 38 tests where the truth was 32; fixed at the source
 and acknowledged where it was stated. The repository stands as the
 deliverable: twelve stories merged, every gate stamped, every Codex finding
 dispositioned, and the trail auditable end to end.
+
+## S3 - Motion (Round 7, operator feedback post-completion)
+
+The operator saw jitter the Round 6 instruments missed: the asset layer's
+per-tick setLatLng survived the v2 build, snapping markers a tick ahead of
+render time once per second before motion pulled them back. Coarse
+displacement sampling reads the snap-and-return as normal movement; only
+rAF-resolution sampling catches it. Layer sync now owns existence and style
+only; motion also skips same-position samples from synthesized ticks.
+Frame-level verification: 360 samples, mean 2.8 m, max 3.0 m, zero spikes,
+zero backward jumps.
