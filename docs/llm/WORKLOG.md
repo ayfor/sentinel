@@ -178,3 +178,15 @@ without center bias, and recycle-on-exit with id rotation that exercises
 the client disposal path continuously (histories dropped on despawn — no
 leak). Movement moved into the generator's advanceAssets. Zone across the
 trunk breached in one second: the scenario is now on demand (S12#d1).
+
+## S3 - Motion (v2, returned per D12)
+
+Gate self-served on the v2 revision. The deferral's prime suspect is closed:
+paint measured at 74.6 canvas redraws per second (attempt 1 only ever
+measured the model). Root cause reassigned to attempt 1's clock: fix-pair
+arrival timing starves under tick jitter. v2 keeps server-stamped fix
+buffers with a smoothed clock offset (S3#d4), renders one tick behind,
+clamps instead of extrapolating, and owns the single rAF: pulse and
+selection ring joined as frame callbacks (S9#d3), drone glides with
+shortest-arc rotation. Operator eyeball remains the final gate — recorded
+openly in the doc.

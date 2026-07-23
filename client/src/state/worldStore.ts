@@ -27,6 +27,8 @@ interface WorldState {
   lastTickMs: number;
   /** Client receipt time of the last tick — the stale check's clock (S8#d1). */
   lastTickReceivedMs: number;
+  /** Bumped per snapshot so motion can reset its buffers (Codex P2, PR #28). */
+  snapshotCount: number;
   connection: ConnectionState;
 
   applySnapshot: (world: WorldSnapshot) => void;
@@ -53,10 +55,12 @@ export const useWorldStore = create<WorldState>((set) => ({
   events: [],
   lastTickMs: 0,
   lastTickReceivedMs: 0,
+  snapshotCount: 0,
   connection: 'connecting',
 
   applySnapshot: (world) =>
     set((state) => ({
+      snapshotCount: state.snapshotCount + 1,
       assets: toMap(world.assets),
       drone: world.drone,
       zones: world.zones,

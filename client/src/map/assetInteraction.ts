@@ -16,11 +16,17 @@ const ringStyle = (solid: boolean): L.CircleMarkerOptions => ({
   interactive: false,
 });
 
+export interface InteractionHandle {
+  /** Selection-ring follower, registered with the S3 motion loop. */
+  frame: () => void;
+  dispose: () => void;
+}
+
 export function attachAssetInteraction(
   map: L.Map,
   markers: Map<string, L.CircleMarker>,
   layer: L.FeatureGroup,
-): () => void {
+): InteractionHandle {
   let hoverRing: L.CircleMarker | null = null;
   let selectRing: L.CircleMarker | null = null;
 
@@ -66,24 +72,27 @@ export function attachAssetInteraction(
   const unsubscribe = useUiStore.subscribe((state, prev) => {
     if (state.selectedAssetId !== prev.selectedAssetId) syncSelectRing();
   });
-  // Selection ring follows its marker each tick.
-  const ticker = window.setInterval(() => {
+  // Selection ring follows its (interpolated) marker per frame via the S3
+  // motion loop; the hover ring follows the same way.
+  const frame = () => {
     const id = useUiStore.getState().selectedAssetId;
     if (id && selectRing) {
       const marker = markers.get(id);
       if (marker) selectRing.setLatLng(marker.getLatLng());
       else clearSelect();
     }
-  }, 250);
+  };
 
-  return () => {
-    window.clearInterval(ticker);
-    unsubscribe();
-    layer.off('mouseover', onOver);
-    layer.off('mouseout', onOut);
-    layer.off('click', onClick);
-    map.off('click', onMapClick);
-    clearHover();
-    clearSelect();
+  return {
+    frame,
+    dispose: () => {
+      unsubscribe();
+      layer.off('mouseover', onOver);
+      layer.off('mouseout', onOut);
+      layer.off('click', onClick);
+      map.off('click', onMapClick);
+      clearHover();
+      clearSelect();
+    },
   };
 }
