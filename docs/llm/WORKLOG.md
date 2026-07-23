@@ -169,3 +169,12 @@ diff (S9#d2), CRITICAL pulse ring on its own small rAF pending S3's return
 (S9#d3), legend chip relocated bottom-right around the S8 drawer (S9#d4),
 and the token audit: palette.ts mirrors the token sheet for canvas paint
 (S9#d5), five layers migrated, grep-clean outside tokens.css and palette.ts.
+
+## S12 - Traffic Structure (Extra)
+
+Gate self-served. Four civil corridors with lateral jitter and staggered
+spacing, 72/48 corridor-to-scatter split (S12#d2), corridor-bearing hold
+without center bias, and recycle-on-exit with id rotation that exercises
+the client disposal path continuously (histories dropped on despawn — no
+leak). Movement moved into the generator's advanceAssets. Zone across the
+trunk breached in one second: the scenario is now on demand (S12#d1).

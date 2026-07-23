@@ -53,4 +53,18 @@ Disposition: corridors-plus-scatter recommended and drafted; formations ruled
 out under T4; density unchanged, structure added. Scheduled with S9, extra,
 cuttable.
 
-Pending batch design gate.
+### Gate Note
+
+Self-served under the wrap-up ruling (see S5 doc); async PR comments still
+override.
+
+### Build Verification
+
+25 tests green including three new corridor tests: the 72/48 split (S12#d2),
+corridor bearing held within 2 degrees over 60 wander steps, and recycle on
+sector exit with fresh ids, stable count, and no history leak. Live: the
+four streams read immediately on the map (transatlantic band, YYZ-YUL trunk,
+both YOW arrival flows, scatter elsewhere); a zone drawn across the trunk
+produced 3 CRITICAL and 3 WARNING within one second — the reproducible
+breach-shadow demo S12#d1 promised. Movement and recycling centralized in
+the generator's advanceAssets; the tick loop stays the orchestrator.
