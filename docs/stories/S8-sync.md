@@ -88,3 +88,11 @@ drawer renders kind-colored newest-first with the one-line ticker. STALE
 path (open socket, no ticks over 3 s) implemented but not exercised live: it
 requires a wedged-but-open server, which nothing in the dev stack can
 simulate honestly.
+
+### Codex Review (PR #24) - Disposition
+
+Codex P1, confirmed real: the stale timer's lastTickReceivedMs guard meant a
+server that completes the handshake but never ticks displayed LIVE forever,
+which is precisely the open-but-not-updating failure S8#d1 exists to catch.
+The clock is now seeded at socket open, so a tickless connection goes STALE
+within the window; the guard is removed.

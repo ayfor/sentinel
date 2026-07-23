@@ -58,6 +58,10 @@ export function useWebSocket(): void {
       socket.onopen = () => {
         window.clearTimeout(connectTimer);
         attempt = 0;
+        // Seed the stale clock at open (Codex P1 on PR #24): a server that
+        // completes the handshake but never ticks must go STALE, not sit
+        // LIVE behind a never-armed timer.
+        useWorldStore.setState({ lastTickReceivedMs: Date.now() });
         store.setConnection('live');
         feedEvent(everConnected ? 'feed recovered' : 'feed connected');
         everConnected = true;
@@ -102,7 +106,7 @@ export function useWebSocket(): void {
     // an open socket is the exact failure a socket-state indicator misses.
     const staleTimer = window.setInterval(() => {
       const { connection, lastTickReceivedMs } = useWorldStore.getState();
-      if (connection === 'live' && lastTickReceivedMs > 0 && Date.now() - lastTickReceivedMs > STALE_AFTER_MS) {
+      if (connection === 'live' && Date.now() - lastTickReceivedMs > STALE_AFTER_MS) {
         useWorldStore.getState().setConnection('stale');
         feedEvent('feed stale (no tick for 3 s)');
       }
