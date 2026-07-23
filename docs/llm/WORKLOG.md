@@ -150,3 +150,14 @@ Leaflet findings the hard way: FeatureGroup vs LayerGroup event
 propagation (S7#d5) and the stopPropagation Leaflet-event idiom (S7#d6) —
 both caught by end-to-end verification through the real canvas hit-test
 path, not the happy-path programmatic one.
+
+## S8 - Sync Hardening (FR-5)
+
+Gate self-served. Exponential backoff with jitter and cap, connect timeout
+(S8#d4 — a half-open upgrade would park the loop in CONNECTING), tick-age
+stale detection (S8#d1), event ticker plus slide-up kind-colored log, and
+client-minted FEED transition events that survive snapshot rehydration by
+merge (S8#d6). The kill/restore drill surfaced a dev-harness truth: Vite's
+ws proxy wedges permanently after a backend bounce, so dev sockets connect
+direct (S8#d5) while production keeps same-origin. Drill evidence: CLOSED
+within a second of kill, LIVE with full rehydration inside the backoff cap.

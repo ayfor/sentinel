@@ -8,7 +8,7 @@ import type {
   ZonePolygon,
 } from '@shared/types';
 
-export type ConnectionState = 'connecting' | 'live' | 'closed';
+export type ConnectionState = 'connecting' | 'live' | 'stale' | 'closed';
 
 /**
  * Client event cap mirrors the server's snapshot cap (S2#d4): the log drawer
@@ -25,6 +25,8 @@ interface WorldState {
   patrol: PatrolPath | null;
   events: EventEntry[];
   lastTickMs: number;
+  /** Client receipt time of the last tick — the stale check's clock (S8#d1). */
+  lastTickReceivedMs: number;
   connection: ConnectionState;
 
   applySnapshot: (world: WorldSnapshot) => void;
@@ -50,18 +52,28 @@ export const useWorldStore = create<WorldState>((set) => ({
   patrol: null,
   events: [],
   lastTickMs: 0,
+  lastTickReceivedMs: 0,
   connection: 'connecting',
 
   applySnapshot: (world) =>
-    set({
+    set((state) => ({
       assets: toMap(world.assets),
       drone: world.drone,
       zones: world.zones,
       patrol: world.patrol,
-      events: world.events.slice(-EVENT_CAPACITY),
-    }),
+      // Client-minted FEED events survive rehydration (S8): a snapshot from a
+      // restarted server carries no history, and wholesale replacement would
+      // erase the very sync story (lost/recovered) the log exists to tell.
+      events: [
+        ...state.events.filter((e) => e.id.startsWith('feed-client-')),
+        ...world.events,
+      ]
+        .sort((a, b) => a.timestampMs - b.timestampMs)
+        .slice(-EVENT_CAPACITY),
+    })),
 
-  applyTick: (timestampMs, assets, drone) => set({ lastTickMs: timestampMs, assets: toMap(assets), drone }),
+  applyTick: (timestampMs, assets, drone) =>
+    set({ lastTickMs: timestampMs, lastTickReceivedMs: Date.now(), assets: toMap(assets), drone }),
 
   applyZones: (zones) => set({ zones }),
 
