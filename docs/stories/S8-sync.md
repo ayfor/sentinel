@@ -49,6 +49,16 @@ Story-local decisions are numbered for citation from code (S8#dN).
   give up quietly.
 - d3: The event drawer reuses the inspector's glass mechanics (same tokens, same
   slide behavior) rather than inventing a second panel language.
+- d4 (build): connect attempts carry a 5 s timeout — a half-open upgrade
+  neither opens nor closes, and onclose drives the retry loop, so a hung
+  socket would park FEED in CONNECTING forever.
+- d5 (build): dev connects the socket directly to :3001 — Vite's ws proxy
+  wedges permanently after a backend restart (every upgrade errors until Vite
+  itself restarts), which would fail FR-5's kill-and-recover acceptance.
+  Production keeps the same-origin path; REST stays proxied (D7 parity).
+- d6 (build): client-minted FEED events survive snapshot rehydration by merge:
+  a restarted server's snapshot carries no history, and wholesale replacement
+  erased the exact lost/recovered story the log exists to tell.
 
 ## Acceptance
 
@@ -61,4 +71,20 @@ Story-local decisions are numbered for citation from code (S8#dN).
 
 ## Review
 
-Pending design gate.
+### Gate Note
+
+Self-served under the wrap-up ruling (see S5 doc); async PR comments still
+override.
+
+### Build Verification
+
+Kill/restore drill (decoupled dev processes; the harness couples Vite to the
+server's lifetime): kill at 21:52:07 flipped FEED to CLOSED within a second;
+restore at 21:52:18 reconnected within the backoff cap, LIVE with 120 tracks
+rehydrated, no refresh. The prior run captured "feed lost" in the log; this
+run proved a client-minted event surviving the rehydrating snapshot (S8#d6).
+Three real findings during the drill, recorded as S8#d4, d5, d6. Event
+drawer renders kind-colored newest-first with the one-line ticker. STALE
+path (open socket, no ticks over 3 s) implemented but not exercised live: it
+requires a wedged-but-open server, which nothing in the dev stack can
+simulate honestly.

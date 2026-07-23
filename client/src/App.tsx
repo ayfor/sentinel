@@ -8,6 +8,7 @@ import { attachDroneLayer } from './map/droneLayer';
 import { attachAssetInteraction } from './map/assetInteraction';
 import { attachTrailLayer } from './map/trailLayer';
 import { InspectorPanel } from './panels/InspectorPanel';
+import { EventDrawer } from './panels/EventDrawer';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
 import { useUiStore } from './state/uiStore';
@@ -30,12 +31,14 @@ const barStyle: React.CSSProperties = {
 const FEED_LABEL = {
   connecting: 'CONNECTING',
   live: 'LIVE',
+  stale: 'STALE',
   closed: 'CLOSED',
 } as const;
 
 const FEED_COLOR = {
   connecting: 'var(--dim)',
   live: 'var(--cyan)',
+  stale: 'var(--amber)',
   closed: 'var(--red)',
 } as const;
 
@@ -116,6 +119,7 @@ export default function App() {
       <StatusBar />
       <NoticeChip />
       <InspectorPanel />
+      <EventDrawer />
       <div id="map" style={{ height: '100%' }} />
     </div>
   );
