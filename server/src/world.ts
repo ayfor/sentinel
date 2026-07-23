@@ -5,6 +5,7 @@ import type {
   Fix,
   PatrolPath,
   WorldSnapshot,
+  Interceptor,
   ZonePolygon,
 } from '../../shared/types.js';
 
@@ -31,6 +32,9 @@ export interface World {
   /** Patrol waypoint cursor, server-internal (never on the wire). */
   patrolWaypointIndex: number;
   drone: DroneState;
+  interceptors: Map<string, Interceptor>;
+  /** Monotonic VIPER callsign counter (S10). */
+  interceptorCounter: number;
   events: EventEntry[];
 }
 
@@ -45,6 +49,8 @@ export function createWorld(): World {
     zoneCounter: 0,
     patrol: null,
     patrolWaypointIndex: 0,
+    interceptors: new Map(),
+    interceptorCounter: 0,
     drone: {
       id: 'drone-sen-01',
       callsign: 'SEN-01',
@@ -79,6 +85,7 @@ export function snapshot(world: World): WorldSnapshot {
     zones: world.zones,
     patrol: world.patrol,
     drone: world.drone,
+    interceptors: [...world.interceptors.values()],
     events: world.events,
   };
 }

@@ -47,6 +47,7 @@ const rederiveAndBroadcast = () => {
     timestampMs: Date.now(),
     assets: [...world.assets.values()],
     drone: world.drone,
+    interceptors: [...world.interceptors.values()],
   });
 };
 

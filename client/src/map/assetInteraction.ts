@@ -63,7 +63,10 @@ export function attachAssetInteraction(
       if (m === marker) { useUiStore.getState().selectAsset(id); break; }
     }
   };
-  const onMapClick = () => useUiStore.getState().selectAsset(null);
+  const onMapClick = () => {
+    useUiStore.getState().selectAsset(null);
+    useUiStore.getState().selectInterceptor(null);
+  };
 
   layer.on('mouseover', onOver);
   layer.on('mouseout', onOut);

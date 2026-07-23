@@ -1,12 +1,10 @@
 import { create } from 'zustand';
-import type {
-  Asset,
+import type { Asset,
   DroneState,
   EventEntry,
   PatrolPath,
   WorldSnapshot,
-  ZonePolygon,
-} from '@shared/types';
+  ZonePolygon, Interceptor } from '@shared/types';
 
 export type ConnectionState = 'connecting' | 'live' | 'stale' | 'closed';
 
@@ -23,6 +21,7 @@ interface WorldState {
   drone: DroneState | null;
   zones: ZonePolygon[];
   patrol: PatrolPath | null;
+  interceptors: Map<string, Interceptor>;
   events: EventEntry[];
   lastTickMs: number;
   /** Client receipt time of the last tick — the stale check's clock (S8#d1). */
@@ -32,7 +31,7 @@ interface WorldState {
   connection: ConnectionState;
 
   applySnapshot: (world: WorldSnapshot) => void;
-  applyTick: (timestampMs: number, assets: Asset[], drone: DroneState) => void;
+  applyTick: (timestampMs: number, assets: Asset[], drone: DroneState, interceptors: Interceptor[]) => void;
   applyZones: (zones: ZonePolygon[]) => void;
   applyPatrol: (patrol: PatrolPath | null) => void;
   applyEvent: (event: EventEntry) => void;
@@ -52,6 +51,7 @@ export const useWorldStore = create<WorldState>((set) => ({
   drone: null,
   zones: [],
   patrol: null,
+  interceptors: new Map(),
   events: [],
   lastTickMs: 0,
   lastTickReceivedMs: 0,
@@ -65,6 +65,7 @@ export const useWorldStore = create<WorldState>((set) => ({
       drone: world.drone,
       zones: world.zones,
       patrol: world.patrol,
+      interceptors: new Map(world.interceptors.map((i) => [i.id, i])),
       // Client-minted FEED events survive rehydration (S8): a snapshot from a
       // restarted server carries no history, and wholesale replacement would
       // erase the very sync story (lost/recovered) the log exists to tell.
@@ -76,8 +77,14 @@ export const useWorldStore = create<WorldState>((set) => ({
         .slice(-EVENT_CAPACITY),
     })),
 
-  applyTick: (timestampMs, assets, drone) =>
-    set({ lastTickMs: timestampMs, lastTickReceivedMs: Date.now(), assets: toMap(assets), drone }),
+  applyTick: (timestampMs, assets, drone, interceptors) =>
+    set({
+      lastTickMs: timestampMs,
+      lastTickReceivedMs: Date.now(),
+      assets: toMap(assets),
+      drone,
+      interceptors: new Map(interceptors.map((i) => [i.id, i])),
+    }),
 
   applyZones: (zones) => set({ zones }),
 

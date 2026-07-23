@@ -190,3 +190,15 @@ clamps instead of extrapolating, and owns the single rAF: pulse and
 selection ring joined as frame callbacks (S9#d3), drone glides with
 shortest-arc rotation. Operator eyeball remains the final gate — recorded
 openly in the doc.
+
+## S10 - Interceptor Dispatch (FR-6, extra)
+
+Gate self-served; design doc written fresh this session (the only story
+whose doc postdates the batch). One interceptor per breacher from the
+nearest of six real airports, direct pursuit at 450 m/s per the S6#d1
+honesty rule, closing-speed estimate that reports null rather than fiction
+on opening geometry (S10#d2), stand-down on exit/despawn with BREACH
+events. Wire gains the Interceptor entity class, kept separate from traffic
+and the drone (S10#d3). Client chevrons ride the S3 motion loop as a third
+buffered group. FR-6 was the last unimplemented requirement: functional
+coverage is now complete.

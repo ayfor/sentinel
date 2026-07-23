@@ -42,6 +42,19 @@ export interface PatrolPath {
   points: LatLng[];
 }
 
+export interface Interceptor {
+  id: string;
+  callsign: string; // VIPER-NN
+  pos: LatLng;
+  headingDeg: number;
+  speedMps: number;
+  /** ICAO of the dispatching airport. */
+  originIcao: string;
+  targetId: string;
+  /** Live closing-speed estimate; null when not closing (S10#d2). */
+  interceptSeconds: number | null;
+}
+
 export type DroneMode = 'idle' | 'patrol' | 'shadow';
 
 export interface DroneState {
@@ -69,13 +82,14 @@ export interface WorldSnapshot {
   zones: ZonePolygon[];
   patrol: PatrolPath | null;
   drone: DroneState;
+  interceptors: Interceptor[];
   events: EventEntry[];
 }
 
 /** Server-to-client messages. The socket is one-way (D1); commands travel REST. */
 export type WsMessage =
   | { type: 'snapshot'; world: WorldSnapshot }
-  | { type: 'tick'; timestampMs: number; assets: Asset[]; drone: DroneState }
+  | { type: 'tick'; timestampMs: number; assets: Asset[]; drone: DroneState; interceptors: Interceptor[] }
   | { type: 'zones'; zones: ZonePolygon[] }
   | { type: 'patrol'; patrol: PatrolPath | null }
   | { type: 'event'; event: EventEntry };

@@ -74,7 +74,7 @@ export function useWebSocket(): void {
             store.applySnapshot(msg.world);
             break;
           case 'tick':
-            store.applyTick(msg.timestampMs, msg.assets, msg.drone);
+            store.applyTick(msg.timestampMs, msg.assets, msg.drone, msg.interceptors);
             if (useWorldStore.getState().connection === 'stale') store.setConnection('live');
             break;
           case 'zones':
