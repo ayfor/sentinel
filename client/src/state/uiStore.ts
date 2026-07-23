@@ -9,6 +9,9 @@ interface UiState {
   notice: string | null;
   showNotice: (text: string) => void;
   clearNotice: () => void;
+  /** Per-client selection (FR-5 ruling): never crosses the wire. */
+  selectedAssetId: string | null;
+  selectAsset: (id: string | null) => void;
 }
 
 const NOTICE_MS = 5000;
@@ -26,4 +29,6 @@ export const useUiStore = create<UiState>((set) => ({
     window.clearTimeout(noticeTimer);
     set({ notice: null });
   },
+  selectedAssetId: null,
+  selectAsset: (id) => set({ selectedAssetId: id }),
 }));

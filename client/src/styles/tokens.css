@@ -121,3 +121,71 @@ html, body, #root {
   text-align: center;
   margin-top: 1px;
 }
+
+/* inspector panel (S7): the ruled layout's first slide-out glass panel */
+.inspector {
+  position: absolute;
+  top: 44px;
+  right: 72px; /* clear of the draw toolbar (44 px buttons at right: 14) */
+  z-index: 1000;
+  width: 190px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  border-radius: var(--radius-control);
+  backdrop-filter: blur(var(--glass-blur));
+  font-family: var(--font-mono);
+  animation: inspector-in 160ms ease-out;
+}
+
+@keyframes inspector-in {
+  from { transform: translateX(12px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.inspector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.inspector-callsign {
+  color: var(--ink);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+.inspector-close {
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.inspector-close:hover { color: var(--ink); }
+
+.inspector-banner {
+  color: var(--red);
+  border: 1px solid var(--glass-threat-line);
+  background: var(--glass-threat-fill);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-align: center;
+  padding: 3px 0;
+  margin-bottom: 8px;
+}
+
+.inspector-lost .inspector-value { opacity: 0.55; }
+
+.inspector-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.inspector-label { color: var(--faint); letter-spacing: 0.1em; }
+.inspector-value { color: var(--ink); }

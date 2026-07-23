@@ -75,6 +75,13 @@ app.delete('/api/zones/:id', async (req, reply) => {
   return reply.code(204).send();
 });
 
+app.get('/api/assets/:id/track', async (req, reply) => {
+  const { id } = req.params as { id: string };
+  const track = world.histories.get(id);
+  if (!track) return reply.code(404).send({ reason: 'unknown asset id' });
+  return reply.send(track);
+});
+
 app.put('/api/patrol', async (req, reply) => {
   const body = req.body as { points?: LatLng[] } | null;
   const result = validatePath(body?.points);

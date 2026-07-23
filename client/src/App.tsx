@@ -5,6 +5,9 @@ import { attachZoneLayer } from './map/zoneLayer';
 import { attachZonesController } from './map/zonesController';
 import { attachPatrolLayer } from './map/patrolLayer';
 import { attachDroneLayer } from './map/droneLayer';
+import { attachAssetInteraction } from './map/assetInteraction';
+import { attachTrailLayer } from './map/trailLayer';
+import { InspectorPanel } from './panels/InspectorPanel';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
 import { useUiStore } from './state/uiStore';
@@ -85,7 +88,14 @@ export default function App() {
 
   useEffect(() => {
     if (!mapRef.current) return;
-    const disposeAssets = attachAssetLayer(mapRef.current);
+    const assets = attachAssetLayer(mapRef.current);
+    const disposeInteraction = attachAssetInteraction(mapRef.current, assets.markers, assets.layer);
+    // dev-only functional-testing hook (S2 convention)
+    if (import.meta.env.DEV) {
+      (window as unknown as { __sentinelMarkers: unknown }).__sentinelMarkers = assets.markers;
+      (window as unknown as { __sentinelUi: unknown }).__sentinelUi = useUiStore;
+    }
+    const disposeTrail = attachTrailLayer(mapRef.current);
     const zones = attachZoneLayer(mapRef.current);
     const patrol = attachPatrolLayer(mapRef.current);
     const disposeDrone = attachDroneLayer(mapRef.current);
@@ -95,7 +105,9 @@ export default function App() {
       disposeDrone();
       patrol.dispose();
       zones.dispose();
-      disposeAssets();
+      disposeTrail();
+      disposeInteraction();
+      assets.dispose();
     };
   }, [mapRef]);
 
@@ -103,6 +115,7 @@ export default function App() {
     <div style={{ height: '100%', position: 'relative' }}>
       <StatusBar />
       <NoticeChip />
+      <InspectorPanel />
       <div id="map" style={{ height: '100%' }} />
     </div>
   );

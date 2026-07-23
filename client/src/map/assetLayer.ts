@@ -17,9 +17,17 @@ const MARKER_STYLE: L.CircleMarkerOptions = {
  *
  * Returns a dispose function.
  */
-export function attachAssetLayer(map: L.Map): () => void {
+export interface AssetLayerHandle {
+  markers: Map<string, L.CircleMarker>;
+  layer: L.FeatureGroup;
+  dispose: () => void;
+}
+
+export function attachAssetLayer(map: L.Map): AssetLayerHandle {
   const markers = new Map<string, L.CircleMarker>();
-  const layer = L.layerGroup().addTo(map);
+  // FeatureGroup, not LayerGroup: it re-emits child marker events, which is
+  // what the S7 interaction module listens on.
+  const layer = L.featureGroup().addTo(map);
 
   const sync = (assets: Map<string, Asset>) => {
     for (const [id, asset] of assets) {
@@ -46,9 +54,13 @@ export function attachAssetLayer(map: L.Map): () => void {
     if (state.assets !== prev.assets) sync(state.assets);
   });
 
-  return () => {
-    unsubscribe();
-    layer.remove();
-    markers.clear();
+  return {
+    markers,
+    layer,
+    dispose: () => {
+      unsubscribe();
+      layer.remove();
+      markers.clear();
+    },
   };
 }

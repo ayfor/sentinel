@@ -1,4 +1,4 @@
-import type { LatLng, ZonePolygon } from '@shared/types';
+import type { Fix, LatLng, ZonePolygon } from '@shared/types';
 
 /** REST commands (D1). Errors resolve to the server's reason string. */
 
@@ -40,4 +40,10 @@ export async function deletePatrol(): Promise<void> {
   if (!res.ok && res.status !== 404) {
     throw new Error(`patrol delete failed (${res.status})`);
   }
+}
+
+export async function getTrack(id: string): Promise<Fix[]> {
+  const res = await fetch(`/api/assets/${id}/track`);
+  if (!res.ok) throw new Error(`track fetch failed (${res.status})`);
+  return (await res.json()) as Fix[];
 }
