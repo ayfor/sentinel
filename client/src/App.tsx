@@ -12,6 +12,8 @@ import { EventDrawer } from './panels/EventDrawer';
 import { Legend } from './panels/Legend';
 import { attachPulseLayer } from './map/pulseLayer';
 import { attachMotion } from './map/motion';
+import { attachInterceptorLayer } from './map/interceptorLayer';
+import { InterceptorPanel } from './panels/InterceptorPanel';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
 import { useUiStore } from './state/uiStore';
@@ -105,8 +107,9 @@ export default function App() {
     const zones = attachZoneLayer(mapRef.current);
     const patrol = attachPatrolLayer(mapRef.current);
     const drone = attachDroneLayer(mapRef.current);
+    const interceptorLayer = attachInterceptorLayer(mapRef.current);
     const pulse = attachPulseLayer(mapRef.current, assets.markers);
-    const motion = attachMotion(assets.markers, drone);
+    const motion = attachMotion(assets.markers, drone, interceptorLayer);
     const offPulse = motion.onFrame(pulse.frame);
     const offRing = motion.onFrame(interaction.frame);
     const disposeController = attachZonesController(mapRef.current, zones.resync, patrol.resync);
@@ -116,6 +119,7 @@ export default function App() {
       offRing();
       motion.dispose();
       pulse.dispose();
+      interceptorLayer.dispose();
       drone.dispose();
       patrol.dispose();
       zones.dispose();
@@ -130,6 +134,7 @@ export default function App() {
       <StatusBar />
       <NoticeChip />
       <InspectorPanel />
+      <InterceptorPanel />
       <EventDrawer />
       <Legend />
       <div id="map" style={{ height: '100%' }} />

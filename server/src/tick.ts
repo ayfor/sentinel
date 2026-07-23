@@ -3,6 +3,7 @@ import { advanceAssets } from './generator.js';
 import { TICK_MS, type World } from './world.js';
 import { deriveAsset } from './derive.js';
 import { stepDrone } from './drone.js';
+import { stepInterceptors } from './interceptor.js';
 
 /**
  * The 1 Hz simulation loop. dt is measured, not assumed (design ruling), so
@@ -11,7 +12,7 @@ import { stepDrone } from './drone.js';
 export function startTick(
   world: World,
   broadcast: (msg: WsMessage) => void,
-  emitEvent: (kind: 'SENTINEL', text: string) => void,
+  emitEvent: (kind: 'SENTINEL' | 'BREACH', text: string) => void,
 ): NodeJS.Timeout {
   let lastTickMs = Date.now();
 
@@ -36,11 +37,14 @@ export function startTick(
     world.patrolWaypointIndex = step.waypointIndex;
     for (const text of step.events) emitEvent('SENTINEL', text);
 
+    stepInterceptors(world, deltaSeconds, emitEvent);
+
     broadcast({
       type: 'tick',
       timestampMs: nowMs,
       assets: [...world.assets.values()],
       drone: world.drone,
+      interceptors: [...world.interceptors.values()],
     });
   }, TICK_MS);
 }

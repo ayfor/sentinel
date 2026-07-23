@@ -12,6 +12,9 @@ interface UiState {
   /** Per-client selection (FR-5 ruling): never crosses the wire. */
   selectedAssetId: string | null;
   selectAsset: (id: string | null) => void;
+  /** Mutually exclusive with asset selection (S10). */
+  selectedInterceptorId: string | null;
+  selectInterceptor: (id: string | null) => void;
 }
 
 const NOTICE_MS = 5000;
@@ -30,5 +33,7 @@ export const useUiStore = create<UiState>((set) => ({
     set({ notice: null });
   },
   selectedAssetId: null,
-  selectAsset: (id) => set({ selectedAssetId: id }),
+  selectAsset: (id) => set({ selectedAssetId: id, ...(id ? { selectedInterceptorId: null } : {}) }),
+  selectedInterceptorId: null,
+  selectInterceptor: (id) => set({ selectedInterceptorId: id, ...(id ? { selectedAssetId: null } : {}) }),
 }));

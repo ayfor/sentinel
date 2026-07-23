@@ -26,6 +26,12 @@ export interface DroneMotionTarget {
   setTether: (ends: [LatLng, LatLng] | null) => void;
 }
 
+export interface InterceptorMotionTarget {
+  markers: Map<string, L.Marker>;
+  setRotation: (id: string, deg: number) => void;
+  setTargetLine: (id: string, ends: [L.LatLngExpression, L.LatLngExpression] | null) => void;
+}
+
 export interface MotionHandle {
   /** Register a per-frame callback (the single-loop contract: S9 pulse, rings). */
   onFrame: (cb: (nowMs: number) => void) => () => void;
@@ -55,9 +61,11 @@ const lerpHeading = (a: number, b: number, t: number): number => {
 export function attachMotion(
   markers: Map<string, L.CircleMarker>,
   drone: DroneMotionTarget,
+  interceptors: InterceptorMotionTarget,
 ): MotionHandle {
   const buffers = new Map<string, Sample[]>();
   const droneBuffer: Sample[] = [];
+  const interceptorBuffers = new Map<string, Sample[]>();
   const frameCallbacks = new Set<(nowMs: number) => void>();
   /** serverMs - performance.now() at arrival, exponentially smoothed. */
   let clockOffset: number | null = null;
@@ -76,6 +84,7 @@ export function attachMotion(
     if (state.snapshotCount !== prev.snapshotCount) {
       buffers.clear();
       droneBuffer.length = 0;
+      interceptorBuffers.clear();
       clockOffset = null;
     }
     if (state.lastTickMs === prev.lastTickMs) return;
@@ -98,6 +107,17 @@ export function attachMotion(
         pos: state.drone.pos,
         headingDeg: state.drone.headingDeg,
       });
+    }
+    for (const [id, interceptor] of state.interceptors) {
+      let buffer = interceptorBuffers.get(id);
+      if (!buffer) {
+        buffer = [];
+        interceptorBuffers.set(id, buffer);
+      }
+      push(buffer, { serverMs: state.lastTickMs, pos: interceptor.pos, headingDeg: interceptor.headingDeg });
+    }
+    for (const id of interceptorBuffers.keys()) {
+      if (!state.interceptors.has(id)) interceptorBuffers.delete(id);
     }
   });
 
@@ -138,6 +158,19 @@ export function attachMotion(
         targetMarker
           ? [droneSample.pos, { lat: targetMarker.getLatLng().lat, lng: targetMarker.getLatLng().lng }]
           : null,
+      );
+    }
+
+    for (const [id, marker] of interceptors.markers) {
+      const sample = sampleAt(interceptorBuffers.get(id) ?? [], renderMs);
+      if (!sample) continue;
+      marker.setLatLng([sample.pos.lat, sample.pos.lng]);
+      interceptors.setRotation(id, sample.headingDeg);
+      const targetId = useWorldStore.getState().interceptors.get(id)?.targetId;
+      const targetMarker = targetId ? markers.get(targetId) : undefined;
+      interceptors.setTargetLine(
+        id,
+        targetMarker ? [[sample.pos.lat, sample.pos.lng], targetMarker.getLatLng()] : null,
       );
     }
 
