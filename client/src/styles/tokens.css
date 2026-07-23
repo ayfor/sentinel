@@ -72,3 +72,37 @@ html, body, #root {
   font-size: 9px;
 }
 .leaflet-control-attribution a { color: var(--dim) !important; }
+
+/* zone designator labels (S4) */
+.zone-label {
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* geoman toolbar, dimmed toward the token sheet (full audit in S9);
+   enlarged and pinned upper right, clear of the status bar */
+.leaflet-top.leaflet-right {
+  top: 34px;
+}
+
+.leaflet-pm-toolbar .button-container a.leaflet-buttons-control-button {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.leaflet-pm-toolbar .button-container a.leaflet-buttons-control-button .control-icon {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}

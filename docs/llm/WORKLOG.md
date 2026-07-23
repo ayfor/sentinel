@@ -102,3 +102,19 @@ not paint under occlusion.
 HUMAN REVIEW — operator ruled deferral (verbatim in doc round 4): smoothing
 stripped, story rescheduled after S12; S2 stepping stands. PR #19 closed
 unmerged as the resumption point; D12 records the tradeoff.
+
+## S4 - Restricted Zones (FR-2)
+
+Design gate closed at round 6 after five review rounds (ERD, invalid-ring
+definition, rejection UX, coordinate bounds, polygon vs ring terminology).
+Build: server six-clause ring validation plus POST/DELETE /api/zones with
+ZONE events; client geoman controller (draw plus removal only, drawn layer
+discarded per S4#d1), render-from-store zone layer with centroid designator
+labels, client-local rejection notice chip (S4#d4). Verification caught one
+real defect in my own validator: a symmetric figure-eight passed the
+degeneracy clause with the wrong reason because equal-and-opposite lobes
+cancel the shoelace sum to zero. Fixed by evaluating simplicity before
+degeneracy, recorded as S4#d5. Curl battery exercised every clause; a
+hand-drawn polygon in the live preview round-tripped through POST, broadcast,
+and re-render, and designators stayed monotonic across a delete. Component
+diagram re-verified, no delta.

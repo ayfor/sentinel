@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { useLeafletMap } from './map/useLeafletMap';
 import { attachAssetLayer } from './map/assetLayer';
+import { attachZoneLayer } from './map/zoneLayer';
+import { attachZonesController } from './map/zonesController';
 import { useWebSocket } from './net/useWebSocket';
 import { useWorldStore } from './state/worldStore';
+import { useUiStore } from './state/uiStore';
 
 const barStyle: React.CSSProperties = {
   position: 'absolute',
@@ -31,6 +34,31 @@ const FEED_COLOR = {
   closed: 'var(--red)',
 } as const;
 
+function NoticeChip() {
+  const notice = useUiStore((s) => s.notice);
+  if (!notice) return null;
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 44,
+        left: 14,
+        zIndex: 1000,
+        padding: '5px 10px',
+        fontSize: 11,
+        letterSpacing: '0.06em',
+        color: 'var(--red)',
+        background: 'var(--glass-threat-fill)',
+        border: '1px solid var(--glass-threat-line)',
+        borderRadius: 'var(--radius-control)',
+        backdropFilter: 'blur(var(--glass-blur))',
+      }}
+    >
+      {notice}
+    </div>
+  );
+}
+
 function StatusBar() {
   const connection = useWorldStore((s) => s.connection);
   const trackCount = useWorldStore((s) => s.assets.size);
@@ -55,12 +83,20 @@ export default function App() {
 
   useEffect(() => {
     if (!mapRef.current) return;
-    return attachAssetLayer(mapRef.current);
+    const disposeAssets = attachAssetLayer(mapRef.current);
+    const zones = attachZoneLayer(mapRef.current);
+    const disposeController = attachZonesController(mapRef.current, zones.resync);
+    return () => {
+      disposeController();
+      zones.dispose();
+      disposeAssets();
+    };
   }, [mapRef]);
 
   return (
     <div style={{ height: '100%', position: 'relative' }}>
       <StatusBar />
+      <NoticeChip />
       <div id="map" style={{ height: '100%' }} />
     </div>
   );

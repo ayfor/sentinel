@@ -25,6 +25,8 @@ export interface World {
   /** Ring buffers keyed by asset id; oldest fix overwritten at capacity. */
   histories: Map<string, Fix[]>;
   zones: ZonePolygon[];
+  /** Monotonic designator counter; never reused after deletion (S4#d3). */
+  zoneCounter: number;
   patrol: PatrolPath | null;
   drone: DroneState;
   events: EventEntry[];
@@ -38,6 +40,7 @@ export function createWorld(): World {
     assets: new Map(),
     histories: new Map(),
     zones: [],
+    zoneCounter: 0,
     patrol: null,
     drone: {
       id: 'drone-sen-01',
